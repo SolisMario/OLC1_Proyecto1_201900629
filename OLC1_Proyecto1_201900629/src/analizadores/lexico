@@ -1,0 +1,70 @@
+/*
+ * Mario Josue Solis Solorzano
+ * Proyecto 1 OLC1
+ * 2021
+ */
+
+package analizadores;
+import java_cup.runtime.Symbol; 
+
+%% 
+%class Lexico
+%public 
+%line 
+%char 
+%cup 
+%unicode
+
+%init{ 
+    yyline = 1; 
+    yychar = 1; 
+%init} 
+  
+
+USORESERVADAS = \"(\.|\*|\+|\?|(\|)|\;|\:|\{|\}|%%|\"|\~|\,)\"
+CARESP = ([ -\/]|[\:-\@]|[\[-\`]|[\{-\}])
+LETRA = [A-Za-z]
+DIGITO = [0-9]
+BLANCOS = [ \r\t]+
+DD = [0-9]+("."[ |0-9]+)?
+COMMUNALINEA = \/\/.*
+COMMMULTILINEA = <!<*([^<!]|[^!]"<"|"!"[^>])*!*!>
+
+%%
+
+{COMMUNALINEA} {}
+{COMMMULTILINEA} {}
+{BLANCOS} { }
+
+
+"CONJ" {return new Symbol(sym.RCONJ,yyline,yychar,yytext());} 
+
+";" {return new Symbol(sym.PTCOMA,yyline,yychar, yytext());}
+":" {return new Symbol(sym.DOSPT,yyline,yychar, yytext());} 
+"{" {return new Symbol(sym.LLAVEIZQ,yyline,yychar, yytext());} 
+"}" {return new Symbol(sym.LLAVEDER,yyline,yychar, yytext());} 
+"%%" {return new Symbol(sym.PORCENTDOB, yyline, yychar, yytext());}
+"\"" {return new Symbol(sym.COMILLADOB, yyline, yychar, yytext());}
+"->" {return new Symbol(sym.ASIGNA, yyline, yychar, yytext());}
+"~" {return new Symbol(sym.VIRGULILLA, yyline, yychar, yytext());}
+"," {return new Symbol(sym.COMA, yyline, yychar, yytext());}
+
+"." {return new Symbol(sym.CONCAT, yyline, yychar, yytext());}
+"|" {return new Symbol(sym.DISYUNC, yyline, yychar, yytext());}
+"*" {return new Symbol(sym.CEROMAS,yyline,yychar, yytext());}
+"+" {return new Symbol(sym.UNOMAS, yyline, yychar, yytext());}
+"?" {return new Symbol(sym.CEROUNA, yyline, yychar, yytext());}
+
+\n {yychar=1;}
+
+{CARESP} {return new Symbol(sym.CARESP,yyline,yychar, yytext());} 
+{LETRA}|{DIGITO} {return new Symbol(sym.CARACTER, yyline, yychar, yytext());}
+({LETRA}|{DIGITO})+ {return new Symbol(sym.IDENTIFICADOR,yyline,yychar, yytext());}
+(({LETRA}|{DIGITO})+|{DD}) {return new Symbol(sym.LEXEMA,yyline,yychar, yytext());}
+{USORESERVADAS} {return new Symbol(sym.USORESERVADAS,yyline,yychar, yytext());}
+
+
+. {
+    System.out.println("Este es un error lexico: "+yytext()+
+    ", en la linea: "+yyline+", en la columna: "+yychar);
+}

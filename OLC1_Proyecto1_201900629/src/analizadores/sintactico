@@ -1,0 +1,122 @@
+/*
+ * Ejemplo desarrollado por Erick Navarro
+ * Blog: e-navarro.blogspot.com
+ * Julio - 2018
+ */
+
+package analizadores; 
+import java_cup.runtime.*;
+import java.util.LinkedList;
+
+parser code 
+{:
+    //Variable utilizada para almacenar los arboles
+    //public LinkedList<Arbol> Arboles = new LinkedList<Arbol>();
+
+    //variables utilizadas para identificar hojas y nodos
+    public int identificador = 0;
+    public int identificadorNodos = 0;
+
+    //Método al que se llama automáticamente ante algún error sintactico.
+    public void syntax_error(Symbol s){ 
+        System.out.println("Error Sintáctico en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+     //Método al que se llama automáticamente ante algún error sintáctico 
+     //en el que ya no es posible una recuperación de errores.
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }
+
+    /*public LinkedList<Arbol> getArboles() {
+        return Arboles;
+    }*/
+:} 
+
+terminal String PTCOMA;
+terminal String LLAVEIZQ, LLAVEDER, DOSPT, PORCENTDOB;
+terminal String COMILLADOB, ASIGNA, VIRGULILLA, COMA;
+terminal String CONCAT, DISYUNC, CEROMAS, UNOMAS, CEROUNA; 
+terminal String CARACTER, IDENTIFICADOR, LEXEMA, CARESP, USORESERVADAS;
+terminal String RCONJ;
+
+non terminal ini;
+non terminal cuerpo;
+non terminal declaraciones;
+non terminal defConjunto;
+non terminal defNotacion;
+non terminal defExpReg;
+non terminal defNotacionRegex;
+non terminal expEvaluar;
+non terminal String identificador;
+
+start with ini;
+
+ini::=
+    LLAVEIZQ cuerpo LLAVEDER
+;
+
+cuerpo::=
+    declaraciones PORCENTDOB expEvaluar
+
+; 
+
+declaraciones ::=
+   defConjunto declaraciones
+ | defExpReg declaraciones
+ | error declaraciones
+ | PORCENTDOB
+; 
+
+defConjunto ::= 
+   RCONJ DOSPT identificador:id ASIGNA defNotacion:a PTCOMA
+{:
+    System.out.println("El conjunto se llama: " + id + " " + a);
+:}
+;
+
+identificador ::=
+    IDENTIFICADOR:a                 {:RESULT=a ;:}
+ |  CARESP:a identificador:b        {:RESULT=a+b ;:}
+ |  IDENTIFICADOR:a identificador:b {:RESULT=a+b ;:}
+ |  CARESP:a                        {:RESULT=a ;:}
+ |  CARACTER:a                      {:RESULT=a ;:}
+ |  CARACTER:a identificador:b      {:RESULT=a+b ;:}
+;
+
+defNotacion ::=
+    CARESP:a VIRGULILLA CARESP:b        {:RESULT=" va de " + a + " hasta " + b ;:}
+ |  CARACTER:a VIRGULILLA CARACTER:b    {:RESULT=" va de " + a + " hasta " + b ;:}
+ |  CARESP:a defNotacion:b              {:RESULT=a+b ;:}
+ |  CARACTER:a defNotacion:b            {:RESULT=a+b ;:}
+ |  COMA:a defNotacion:b                {:RESULT=a+b ;:}
+ |  CARESP:a                            {:RESULT=a ;:}
+ |  CARACTER:a                          {:RESULT=a ;:}
+;
+
+defExpReg ::=
+    identificador:id ASIGNA defNotacionRegex:a PTCOMA
+;
+
+defNotacionRegex ::=
+    LLAVEIZQ identificador:hoja LLAVEDER                 
+ |  CONCAT defNotacionRegex:izq defNotacionRegex:der     
+ |  DISYUNC defNotacionRegex:izq defNotacionRegex:der    
+ |  CEROMAS defNotacionRegex:unico                       
+ |  UNOMAS defNotacionRegex:unico                        
+ |  CEROUNA defNotacionRegex:unico                       
+ |  COMILLADOB CARESP:hoja COMILLADOB                    
+ |  COMILLADOB CARACTER:hoja COMILLADOB                  
+ |  CARESP:hoja                                          
+ |  USORESERVADAS:hoja                                   
+;
+
+expEvaluar ::=
+    IDENTIFICADOR DOSPT COMILLADOB LEXEMA COMILLADOB PTCOMA expEvaluar
+ |  IDENTIFICADOR DOSPT COMILLADOB LEXEMA COMILLADOB PTCOMA
+ |  IDENTIFICADOR DOSPT COMILLADOB identificador COMILLADOB PTCOMA expEvaluar
+ |  IDENTIFICADOR DOSPT COMILLADOB identificador COMILLADOB PTCOMA
+;
