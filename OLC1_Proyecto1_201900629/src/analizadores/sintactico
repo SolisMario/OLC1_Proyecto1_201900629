@@ -11,7 +11,12 @@ import java.util.LinkedList;
 parser code 
 {:
     //Variable utilizada para almacenar los arboles
-    //public LinkedList<Arbol> Arboles = new LinkedList<Arbol>();
+    public LinkedList<Arbol> Arboles = new LinkedList<Arbol>();
+    public LinkedList<String> nombresConjuntos = new LinkedList<>();
+    public LinkedList<String> nombresUtilizados = new LinkedList<>();
+    public LinkedList<Conjunto> conjuntos = new LinkedList<Conjunto>();
+    public LinkedList<String> sueltos = new LinkedList<>();
+    public LinkedList<String> palabras = new LinkedList<>();
 
     //variables utilizadas para identificar hojas y nodos
     public int identificador = 0;
@@ -31,9 +36,54 @@ parser code
         " no reconocido."); 
     }
 
-    /*public LinkedList<Arbol> getArboles() {
-        return Arboles;
-    }*/
+    public void guardarConjunto(String nombre, String cadena) {
+        if (!nombresConjuntos.contains(nombre)) {
+            LinkedList<String> elementos = new LinkedList<>();
+            nombresConjuntos.add(nombre);
+            if (cadena.endsWith("Rango")) {
+                int inicio = cadena.charAt(0);
+                int fin = cadena.charAt(2);
+                for (int i = inicio; i <= fin; i++) {
+                    elementos.add(String.valueOf((char) i));
+                }
+            }
+            else if(cadena.endsWith("Comas")){
+                String[] componentes = cadena.split(",");
+                for(int i = 0; i < componentes.length - 1; i++){
+                    elementos.add(componentes[i]);
+                }
+            }
+            System.out.println("elementos: " + elementos);
+            Conjunto conjunto = new Conjunto(nombre, elementos);
+            conjuntos.add(conjunto);
+        }
+        System.out.println(nombresConjuntos);
+    }
+
+    public void guardarAlfabeto(String cadena){
+        if(cadena.length() > 1){
+            if(!palabras.contains(cadena)){
+                palabras.add(cadena);
+            }
+        }else{
+            if(!sueltos.contains(cadena)){
+                sueltos.add(cadena);
+            }
+        }
+    }
+
+    public void seleccionarConjuntos(Arbol arbol){
+        for(int i = 0; i < nombresUtilizados.size(); i++){
+                System.out.println(nombresUtilizados.get(i));
+            for(int j = 0; j < conjuntos.size(); j++){
+                System.out.println(conjuntos.get(j).nombre);
+                if(nombresUtilizados.get(i).equals(conjuntos.get(j).nombre)){
+                    arbol.conjuntos.add(conjuntos.get(j));
+                    break;
+                }
+            }
+        }
+    }
 :} 
 
 terminal String PTCOMA;
@@ -47,9 +97,9 @@ non terminal ini;
 non terminal cuerpo;
 non terminal declaraciones;
 non terminal defConjunto;
-non terminal defNotacion;
+non terminal String defNotacion;
 non terminal defExpReg;
-non terminal defNotacionRegex;
+non terminal Nodo defNotacionRegex;
 non terminal expEvaluar;
 non terminal String identificador;
 
@@ -74,7 +124,7 @@ declaraciones ::=
 defConjunto ::= 
    RCONJ DOSPT identificador:id ASIGNA defNotacion:a PTCOMA
 {:
-    System.out.println("El conjunto se llama: " + id + " " + a);
+    parser.guardarConjunto(id, a);
 :}
 ;
 
@@ -88,13 +138,12 @@ identificador ::=
 ;
 
 defNotacion ::=
-    CARESP:a VIRGULILLA CARESP:b        {:RESULT=" va de " + a + " hasta " + b ;:}
- |  CARACTER:a VIRGULILLA CARACTER:b    {:RESULT=" va de " + a + " hasta " + b ;:}
- |  CARESP:a defNotacion:b              {:RESULT=a+b ;:}
- |  CARACTER:a defNotacion:b            {:RESULT=a+b ;:}
- |  COMA:a defNotacion:b                {:RESULT=a+b ;:}
- |  CARESP:a                            {:RESULT=a ;:}
- |  CARACTER:a                          {:RESULT=a ;:}
+    CARESP:a VIRGULILLA CARESP:b        {:RESULT= a + "_" + b + "_Rango";:}
+ |  CARACTER:a VIRGULILLA CARACTER:b    {:RESULT= a + "_" + b + "_Rango";:}
+ |  CARESP:a COMA defNotacion:b         {:RESULT= a  + "," + b;:}
+ |  CARACTER:a COMA defNotacion:b       {:RESULT= a  + "," + b;:}
+ |  CARESP:a                            {:RESULT= a + ",Comas";:}
+ |  CARACTER:a                          {:RESULT= a + ",Comas" ;:}
 ;
 
 defExpReg ::=
@@ -103,15 +152,39 @@ defExpReg ::=
 
 defNotacionRegex ::=
     LLAVEIZQ identificador:hoja LLAVEDER                 
+    {:parser.identificador += 1; 
+    parser.identificadorNodos += 1; 
+    RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
+    if(!parser.nombresUtilizados.contains(hoja)){
+        System.out.println("nombre de Conjunto insertado: " + hoja);
+        parser.nombresUtilizados.add(hoja);
+    }:}
  |  CONCAT defNotacionRegex:izq defNotacionRegex:der     
+    {:parser.identificadorNodos += 1;
+     RESULT=new Nodo(".", izq, der, String.valueOf(identificadorNodos), null);:}
  |  DISYUNC defNotacionRegex:izq defNotacionRegex:der    
+    {:parser.identificadorNodos += 1; 
+    RESULT=new Nodo("|", izq, der, String.valueOf(identificadorNodos), null);:}
  |  CEROMAS defNotacionRegex:unico                       
+    {:parser.identificadorNodos += 1; 
+    RESULT=new Nodo("*", null, unico, String.valueOf(identificadorNodos), null);:}
  |  UNOMAS defNotacionRegex:unico                        
+    {:parser.identificadorNodos += 1; 
+    RESULT=new Nodo("+", null, unico, String.valueOf(identificadorNodos), null);:}
  |  CEROUNA defNotacionRegex:unico                       
- |  COMILLADOB CARESP:hoja COMILLADOB                    
- |  COMILLADOB CARACTER:hoja COMILLADOB                  
- |  CARESP:hoja                                          
+    {:parser.identificadorNodos += 1; 
+    RESULT=new Nodo("?", null, unico, String.valueOf(identificadorNodos), null);:}
  |  USORESERVADAS:hoja                                   
+    {:parser.identificadorNodos += 1; 
+    parser.identificador += 1; 
+    RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
+    parser.guardarAlfabeto(hoja.replaceAll("\"", ""));:}
+ |  COMILLADOB identificador:hoja COMILLADOB                  
+    {:parser.identificadorNodos += 1; 
+    parser.identificador += 1; 
+    RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
+    parser.guardarAlfabeto(hoja);
+:}
 ;
 
 expEvaluar ::=
