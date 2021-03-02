@@ -312,7 +312,6 @@ public class Arbol {
         for (int i = 0; i < arbol.transiciones.size(); i++) {
             String[] fila = arbol.transiciones.get(i).split("\\|");
 
-            String nombre = fila[0];
 
             String[] identificadores = fila[1].split(",");
 
@@ -351,8 +350,7 @@ public class Arbol {
         LinkedList<String> estadoLimpio = new LinkedList<>();
         String[] todosSiguientes = todos.split(",");
         for (int i = 0; i < todosSiguientes.length; i++) {
-            boolean existente = false;
-            if (!estadoLimpio.contains(todosSiguientes) && !todosSiguientes[i].equals("")) {
+            if (!estadoLimpio.contains(todosSiguientes[i]) && !todosSiguientes[i].equals("")) {
                 estadoLimpio.add(todosSiguientes[i]);
             }
         }
@@ -413,7 +411,7 @@ public class Arbol {
         if (tmp != null) {
             getAlfabeto(arbol, tmp.izquierdo);
             if (tmp.identificador != null) {
-                if(!arbol.alfabeto.contains(tmp.simbolo)){
+                if(!arbol.alfabeto.contains(tmp.simbolo) && !tmp.simbolo.equals("#")){
                     arbol.alfabeto.add(tmp.simbolo);
                 }
             }
@@ -521,5 +519,59 @@ public class Arbol {
         bw.close();
 
         Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o " + nombrePng);
+    }
+    
+    public static void reporteTransiciones(Arbol arbol) throws IOException {
+        LinkedList<String> tabTransicion = arbol.transiciones;
+
+        String nombreDot = arbol.nombreRegex + "Trans.dot";
+        String nombrePng = arbol.nombreRegex + "Trans.png";
+
+        File archivo = new File(nombreDot);
+        FileWriter fw = new FileWriter(archivo);
+        BufferedWriter bw = new BufferedWriter(fw);
+
+        bw.write("digraph tablatransiciones {\n");
+        bw.write("abc [shape=none, margin=0, label=<\n");
+        bw.write("<TABLE BORDER=" + "\"" + 0 + "\"" + " CELLBORDER=" + "\"" + 1 + "\"" + " CELLSPACING=" + "\"" + 0 + "\"" + " CELLPADDING=" + "\"" + 4 + "\"" + ">\n");
+        bw.write("<TR>\n");
+        bw.write("<TD ROWSPAN=" + "\"" + 2 + "\"" + ">Estado</TD>\n");
+        bw.write("<TD COLSPAN=" + "\"" + arbol.alfabeto.size() + "\"" + ">Terminales</TD>\n");
+        bw.write("</TR>\n");
+        bw.write("<TR>\n");
+        for (int i = 0; i < arbol.alfabeto.size(); i++) {
+            bw.write("<TD>" + arbol.alfabeto.get(i) + "</TD>");
+        }
+        bw.write("</TR>\n");
+
+        for (int i = 0; i < tabTransicion.size(); i++) {
+            bw.write("<TR>\n");
+            bw.write("<TD>" + tabTransicion.get(i).split("\\|")[0] + "</TD>");
+            for (int j = 0; j < arbol.alfabeto.size(); j++) {
+                bw.write("<TD>" + getTransicionSimbolo(tabTransicion.get(i), arbol.alfabeto.get(j)) + "</TD>");
+            }
+            bw.write("</TR>\n");
+        }
+
+        bw.write("</TABLE>>];\n");
+        bw.write("}");
+        bw.close();
+
+        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o " + nombrePng);
+
+    }
+
+    public static String getTransicionSimbolo(String transicion, String simboloAlfabeto) {
+        String estado = "--";
+        if (transicion.split("\\|").length > 2) {
+            String[] estadosTrans = transicion.split("\\|")[2].split(",");
+            for (int i = 0; i < estadosTrans.length; i++) {
+                String[] estadoSimbolo = estadosTrans[i].split("~");
+                if (estadoSimbolo[1].equals(simboloAlfabeto)) {
+                    return estadoSimbolo[0];
+                }
+            }
+        }
+        return estado;
     }
 }
