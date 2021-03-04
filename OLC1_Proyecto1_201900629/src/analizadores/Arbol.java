@@ -16,6 +16,7 @@ import java.util.LinkedList;
  * @author Mario Josue Solis Solorzano
  */
 public class Arbol {
+
     Nodo root = null;
     String nombreRegex = null;
     LinkedList<String> siguientes = new LinkedList<>();
@@ -29,7 +30,7 @@ public class Arbol {
         this.nombreRegex = nombreRegex;
         this.root = root;
     }
-    
+
     public static void getHoja(Arbol arbol) {
         Nodo tmp = arbol.root;
         insertarHojaSiguientes(arbol, tmp);
@@ -45,12 +46,12 @@ public class Arbol {
             insertarHojaSiguientes(arbol, actual.derecho);
         }
     }
-    
+
     public static void imprimirArbol(Arbol arbol) throws IOException {
         Nodo tmp = null;
         tmp = arbol.root;
 
-        String nombreDot = arbol.nombreRegex + ".dot";
+        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + ".dot";
         String nombrePng = arbol.nombreRegex + ".png";
 
         File archivo = new File(nombreDot);
@@ -70,7 +71,7 @@ public class Arbol {
         bw2.write("}");
         bw2.close();
 
-        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o " + nombrePng);
+        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o ARBOLES_201900629/" + nombrePng);
     }
 
     public static void escribir_rec(Nodo raiz, String nombreDot) throws IOException {
@@ -133,7 +134,7 @@ public class Arbol {
             escribir_rec(raiz.derecho, nombreDot);
         }
     }
-    
+
     public static void setAnulables(Nodo raiz) {
         Nodo tmp = raiz;
         if (tmp != null) {
@@ -313,10 +314,9 @@ public class Arbol {
         for (int i = 0; i < arbol.transiciones.size(); i++) {
             String[] fila = arbol.transiciones.get(i).split("\\|");
 
-
             String[] identificadores = fila[1].split(",");
 
-            for (int j = 0; j < arbol.alfabeto.size() - 1; j++) {
+            for (int j = 0; j < arbol.alfabeto.size(); j++) {
                 String transicionAlfabeto = new String();
                 for (int k = 0; k < identificadores.length; k++) {
                     int identificadorIndex = Integer.parseInt(identificadores[k]) - 1;
@@ -437,7 +437,7 @@ public class Arbol {
         LinkedList<String> tablaTrancisiones = arbol.transiciones;
         LinkedList<String> estadosAceptacion = arbol.estadosAceptacion;
 
-        String nombreDot = arbol.nombreRegex + "AFD.dot";
+        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + "AFD.dot";
         String nombrePng = arbol.nombreRegex + "AFD.png";
 
         File archivo = new File(nombreDot);
@@ -458,7 +458,6 @@ public class Arbol {
         }
 
         for (int i = 0; i < tablaTrancisiones.size(); i++) {
-            System.out.println(tablaTrancisiones.get(i));
             String[] transicion = tablaTrancisiones.get(i).split("\\|");
             String estadoActual = transicion[0];
             String[] estadosSiguientes;
@@ -466,7 +465,7 @@ public class Arbol {
                 estadosSiguientes = transicion[2].split(",");
                 for (int j = 0; j < estadosSiguientes.length; j++) {
                     String[] composTransicion = estadosSiguientes[j].split("~");
-                    bw.write("\"" + estadoActual + "\"" + "->" + "\"" + composTransicion[0] + "\"" + "[label="  + composTransicion[1] + "]\n");
+                    bw.write("\"" + estadoActual + "\"" + "->" + "\"" + composTransicion[0] + "\"" + "[label="  + "\"" + composTransicion[1].replaceAll("\"", "") + "\"" + "]\n");
                 }
             }
         }
@@ -477,14 +476,16 @@ public class Arbol {
         bw.write("}");
         bw.close();
 
-        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o " + nombrePng);
+        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o AFD_201900629/" + nombrePng);
+        
+        graficarAFN(arbol);
 
     }
 
     public static void reporteSiguienes(Arbol arbol) throws IOException {
         LinkedList<String> tablaSiguientes = arbol.siguientes;
 
-        String nombreDot = arbol.nombreRegex + "Sig.dot";
+        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + "Sig.dot";
         String nombrePng = arbol.nombreRegex + "sig.png";
 
         File archivo = new File(nombreDot);
@@ -519,13 +520,13 @@ public class Arbol {
         bw.write("}");
         bw.close();
 
-        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o " + nombrePng);
+        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o SIGUIENTES_201900629/" + nombrePng);
     }
-    
+
     public static void reporteTransiciones(Arbol arbol) throws IOException {
         LinkedList<String> tabTransicion = arbol.transiciones;
 
-        String nombreDot = arbol.nombreRegex + "Trans.dot";
+        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + "Trans.dot";
         String nombrePng = arbol.nombreRegex + "Trans.png";
 
         File archivo = new File(nombreDot);
@@ -558,7 +559,7 @@ public class Arbol {
         bw.write("}");
         bw.close();
 
-        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o " + nombrePng);
+        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o TRANSICIONES_201900629/" + nombrePng);
 
     }
 
@@ -575,12 +576,76 @@ public class Arbol {
         }
         return estado;
     }
+
+    public static void validarCadena(Arbol arbol, String cadenaEvaluar) {
+        LinkedList<String> posibleTransicion = new LinkedList<>();
+        LinkedList<String> transiciones = arbol.transiciones;
+
+        boolean valida = false;
+        boolean rama = true;
+        boolean truncada = false;
+
+        String estadoActual = transiciones.get(0).split("\\|")[0];
+
+        for (int i = 0; i < cadenaEvaluar.length(); i++) {
+            if (!rama) {
+                truncada = true;
+            }
+            for (int j = 0; j < transiciones.size(); j++) {
+                String origen = transiciones.get(j).split("\\|")[0];
+                if (estadoActual.equals(origen)) {
+                    String[] posibles = transiciones.get(j).split("\\|")[2].split(",");
+                    for (int k = 0; k < posibles.length; k++) {
+                        posibleTransicion.add(posibles[k]);
+                    }
+                    break;
+                }
+            }
+            if (posibleTransicion.size() == 0) {
+                truncada = true;
+            }
+            for (int j = 0; j < posibleTransicion.size(); j++) {
+                boolean matchName = false;
+                String[] partesTransi = posibleTransicion.get(j).split("\\~");
+                for (int k = 0; k < arbol.conjuntos.size(); k++) {
+                    if(partesTransi[1].replaceAll("\"", "").equals(arbol.conjuntos.get(k).nombre.replaceAll("\"", ""))){
+                        if(arbol.conjuntos.get(k).componentes.contains(String.valueOf(cadenaEvaluar.charAt(i)))){
+                            matchName = true;
+                            break;
+                        }
+                    }
+                }
+                if(!matchName){
+                    if(partesTransi[1].replaceAll("\"", "").equals(String.valueOf(cadenaEvaluar.charAt(i)))){
+                        matchName = true;
+                    }
+                }
+                if (matchName) {
+                    estadoActual = partesTransi[0];
+                    posibleTransicion.clear();
+                    rama = true;
+                } else {
+                    rama = false;
+                }
+            }
+        }
+        
+        if (arbol.estadosAceptacion.contains(estadoActual)) {
+            valida = true;
+        }
+                
+        if (!valida || truncada) {
+            System.out.println("La cadena no es valida");
+        } else {
+            System.out.println("la cadena es valida");
+        }
+    }   
     
     public static void graficarAFN(Arbol arbol) throws IOException{
         LinkedList<String> pilaPartes = new LinkedList<>();
         int identificador = 0;
 
-        String nombreDot = arbol.nombreRegex + "AFN.dot";
+        String nombreDot = "Archivos DOT/" +  arbol.nombreRegex + "AFN.dot";
         String nombrePng = arbol.nombreRegex + "AFN.png";
 
         File archivo = new File(nombreDot);
@@ -599,20 +664,18 @@ public class Arbol {
 
         bw2.write("}");
         bw2.close();
-        arbol.identificadorAFN = 0;
-        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o " + nombrePng);
+
+        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o AFND_201900629/" + nombrePng);
     }
     
     public static void partesAFN(Nodo raiz, LinkedList<String> partes, Arbol arbol, String nombreDot) throws IOException{
         Nodo tmp = raiz;
         if(tmp != null){
             partesAFN(raiz.izquierdo, partes, arbol, nombreDot);
-            partesAFN(raiz.derecho, partes, arbol, nombreDot);
-            System.out.println("recorrido: " + tmp.simbolo);
-            
+            partesAFN(raiz.derecho, partes, arbol, nombreDot);            
             File archivo = new File(nombreDot);
-        FileWriter fw = new FileWriter(archivo, true);
-        BufferedWriter bw = new BufferedWriter(fw);
+            FileWriter fw = new FileWriter(archivo, true);
+            BufferedWriter bw = new BufferedWriter(fw);
         
         if(tmp.simbolo.equals("|")){
             arbol.identificadorAFN++;
@@ -631,10 +694,7 @@ public class Arbol {
             bw.write("\"" + finNodobB + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
             partes.removeLast();
             partes.removeLast();
-            System.out.println("sale del or " + nodoInicio + nodoFin);
-            System.out.println("simbolo :" + tmp.simbolo);
             partes.add(nodoInicio + "_" + nodoFin);
-            System.out.println(partes);
         }
         else if(tmp.simbolo.equals("*")){
             arbol.identificadorAFN++;
@@ -642,8 +702,6 @@ public class Arbol {
             bw.write("\"" + nodoInicio + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
             String inicioNodoA = partes.get(partes.size() - 1).split("_")[0];
             String finNodoA = partes.get(partes.size() - 1).split("_")[1];
-            System.out.println("inicioNodoA " + inicioNodoA);
-            System.out.println("finNodoA " + finNodoA);
             bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
             arbol.identificadorAFN++;
             String nodoFin = "nodo" + String.valueOf(arbol.identificadorAFN);
@@ -653,8 +711,6 @@ public class Arbol {
             bw.write("\"" + finNodoA + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + " constraint=false]\n");
             partes.removeLast();
             partes.add(nodoInicio + "_" + nodoFin);
-            System.out.println("simbolo :" + tmp.simbolo);
-            System.out.println(partes);
         }
         else if(tmp.simbolo.equals("+")){
             arbol.identificadorAFN++;
@@ -670,8 +726,6 @@ public class Arbol {
             bw.write("\"" + finNodoA + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + " constraint=false]\n");
             partes.removeLast();
             partes.add(nodoInicio + "_" + nodoFin);
-            System.out.println("simbolo :" + tmp.simbolo);
-            System.out.println(partes);
         }
         else if(tmp.simbolo.equals("?")){
             arbol.identificadorAFN++;
@@ -687,8 +741,6 @@ public class Arbol {
             bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + " constraint=false]\n");
             partes.removeLast();
             partes.add(nodoInicio + "_" + nodoFin);
-            System.out.println("simbolo :" + tmp.simbolo);
-            System.out.println(partes);
         }
         else if(tmp.simbolo.equals(".")){
             String inicioNodoA = partes.get(partes.size() - 2).split("_")[0];
@@ -699,8 +751,6 @@ public class Arbol {
             partes.removeLast();
             partes.removeLast();
             partes.add(inicioNodoA + "_" + finNodobB);
-            System.out.println("simbolo :" + tmp.simbolo);
-            System.out.println(partes);
         }
         else if(!tmp.simbolo.equals(".") || !tmp.simbolo.equals("*") || !tmp.simbolo.equals("?") || !tmp.simbolo.equals("+") || !tmp.simbolo.equals("|")){
             arbol.identificadorAFN++;
@@ -709,10 +759,8 @@ public class Arbol {
             arbol.identificadorAFN++;
             String nodoFin = "nodo" + String.valueOf(arbol.identificadorAFN);
             bw.write("\"" + nodoFin + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + tmp.simbolo + "\"" + "]\n");
+            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + tmp.simbolo.replaceAll("\"", "") + "\"" + "]\n");
             partes.add(nodoInicio + "_" + nodoFin);
-            System.out.println("simbolo :" + tmp.simbolo);
-            System.out.println(partes);
         }
         bw.close();
         }

@@ -1,7 +1,7 @@
 /*
- * Mario Josue Solis Solorzano
- * Proyecto 1 OLC1
- * 2021
+ * Ejemplo desarrollado por Erick Navarro
+ * Blog: e-navarro.blogspot.com
+ * Julio - 2018
  */
 
 package analizadores;
@@ -21,7 +21,7 @@ import java_cup.runtime.Symbol;
 %init} 
   
 
-USORESERVADAS = \"(\.|\*|\+|\?|(\|)|\;|\:|\{|\}|%%|\"|\~|\,)\"
+USORESERVADAS = \"(\.|\*|\+|\?|(\|)|\;|\:|\{|\}|%%|\"|\~|\,|\-)\"
 CARESP = ([ -\/]|[\:-\@]|[\[-\`]|[\{-\}])
 LETRA = [A-Za-z]
 DIGITO = [0-9]
@@ -45,7 +45,8 @@ COMMMULTILINEA = <!<*([^<!]|[^!]"<"|"!"[^>])*!*!>
 "}" {return new Symbol(sym.LLAVEDER,yyline,yychar, yytext());} 
 "%%" {return new Symbol(sym.PORCENTDOB, yyline, yychar, yytext());}
 "\"" {return new Symbol(sym.COMILLADOB, yyline, yychar, yytext());}
-"->" {return new Symbol(sym.ASIGNA, yyline, yychar, yytext());}
+"-" {return new Symbol(sym.GUION, yyline, yychar, yytext());}
+">" {return new Symbol(sym.MAYOR, yyline, yychar, yytext());}
 "~" {return new Symbol(sym.VIRGULILLA, yyline, yychar, yytext());}
 "," {return new Symbol(sym.COMA, yyline, yychar, yytext());}
 

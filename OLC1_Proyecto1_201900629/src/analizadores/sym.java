@@ -8,38 +8,40 @@ package analizadores;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int CEROUNA = 15;
-  public static final int DOSPT = 5;
-  public static final int UNOMAS = 14;
-  public static final int RCONJ = 21;
-  public static final int CONCAT = 11;
-  public static final int CARACTER = 16;
-  public static final int LLAVEIZQ = 3;
-  public static final int COMA = 10;
-  public static final int LLAVEDER = 4;
+  public static final int CEROUNA = 16;
+  public static final int GUION = 3;
+  public static final int DOSPT = 7;
+  public static final int UNOMAS = 15;
+  public static final int RCONJ = 22;
+  public static final int CONCAT = 12;
+  public static final int CARACTER = 17;
+  public static final int LLAVEIZQ = 5;
+  public static final int COMA = 11;
+  public static final int LLAVEDER = 6;
+  public static final int MAYOR = 4;
   public static final int EOF = 0;
-  public static final int CARESP = 19;
+  public static final int CARESP = 20;
   public static final int error = 1;
-  public static final int IDENTIFICADOR = 17;
-  public static final int USORESERVADAS = 20;
-  public static final int VIRGULILLA = 9;
-  public static final int CEROMAS = 13;
-  public static final int LEXEMA = 18;
-  public static final int ASIGNA = 8;
-  public static final int PORCENTDOB = 6;
-  public static final int COMILLADOB = 7;
+  public static final int IDENTIFICADOR = 18;
+  public static final int USORESERVADAS = 21;
+  public static final int VIRGULILLA = 10;
+  public static final int CEROMAS = 14;
+  public static final int LEXEMA = 19;
+  public static final int PORCENTDOB = 8;
+  public static final int COMILLADOB = 9;
   public static final int PTCOMA = 2;
-  public static final int DISYUNC = 12;
+  public static final int DISYUNC = 13;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "PTCOMA",
+  "GUION",
+  "MAYOR",
   "LLAVEIZQ",
   "LLAVEDER",
   "DOSPT",
   "PORCENTDOB",
   "COMILLADOB",
-  "ASIGNA",
   "VIRGULILLA",
   "COMA",
   "CONCAT",

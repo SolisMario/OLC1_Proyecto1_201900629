@@ -18,22 +18,30 @@ parser code
     public LinkedList<String> sueltos = new LinkedList<>();
     public LinkedList<String> palabras = new LinkedList<>();
 
-    //variables utilizadas para identificar hojas y nodos
+
     public int identificador = 0;
     public int identificadorNodos = 0;
 
-    //Método al que se llama automáticamente ante algún error sintactico.
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
     public void syntax_error(Symbol s){ 
         System.out.println("Error Sintáctico en la Línea " + (s.left) +
         " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
     } 
 
-     //Método al que se llama automáticamente ante algún error sintáctico 
-     //en el que ya no es posible una recuperación de errores.
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.out.println("Error síntactico irrecuperable en la Línea " + 
         (s.left)+ " Columna "+s.right+". Componente " + s.value + 
         " no reconocido."); 
+    }
+
+    public LinkedList<Arbol> getArboles() {
+        return Arboles;
     }
 
     public void guardarConjunto(String nombre, String cadena) {
@@ -53,42 +61,23 @@ parser code
                     elementos.add(componentes[i]);
                 }
             }
-            System.out.println("elementos: " + elementos);
             Conjunto conjunto = new Conjunto(nombre, elementos);
             conjuntos.add(conjunto);
         }
-        System.out.println(nombresConjuntos);
     }
 
     public void guardarAlfabeto(String cadena){
         if(cadena.length() > 1){
-            if(!palabras.contains(cadena)){
-                palabras.add(cadena);
-            }
-        }else{
             if(!sueltos.contains(cadena)){
                 sueltos.add(cadena);
             }
         }
     }
-
-    public void seleccionarConjuntos(Arbol arbol){
-        for(int i = 0; i < nombresUtilizados.size(); i++){
-                System.out.println(nombresUtilizados.get(i));
-            for(int j = 0; j < conjuntos.size(); j++){
-                System.out.println(conjuntos.get(j).nombre);
-                if(nombresUtilizados.get(i).equals(conjuntos.get(j).nombre)){
-                    arbol.conjuntos.add(conjuntos.get(j));
-                    break;
-                }
-            }
-        }
-    }
 :} 
 
-terminal String PTCOMA;
+terminal String PTCOMA, GUION, MAYOR;
 terminal String LLAVEIZQ, LLAVEDER, DOSPT, PORCENTDOB;
-terminal String COMILLADOB, ASIGNA, VIRGULILLA, COMA;
+terminal String COMILLADOB, VIRGULILLA, COMA;
 terminal String CONCAT, DISYUNC, CEROMAS, UNOMAS, CEROUNA; 
 terminal String CARACTER, IDENTIFICADOR, LEXEMA, CARESP, USORESERVADAS;
 terminal String RCONJ;
@@ -119,10 +108,10 @@ declaraciones ::=
  | defExpReg declaraciones
  | error declaraciones
  | PORCENTDOB
-; 
+;
 
 defConjunto ::= 
-   RCONJ DOSPT identificador:id ASIGNA defNotacion:a PTCOMA
+   RCONJ DOSPT identificador:id GUION MAYOR defNotacion:a PTCOMA
 {:
     parser.guardarConjunto(id, a);
 :}
@@ -130,7 +119,7 @@ defConjunto ::=
 
 identificador ::=
     IDENTIFICADOR:a                 {:RESULT=a ;:}
- |  CARESP:a identificador:b        {:RESULT=a+b ;:}
+ |  CARESP:a identificador:b        {:RESULT=a + b ;:}
  |  IDENTIFICADOR:a identificador:b {:RESULT=a+b ;:}
  |  CARESP:a                        {:RESULT=a ;:}
  |  CARACTER:a                      {:RESULT=a ;:}
@@ -147,7 +136,39 @@ defNotacion ::=
 ;
 
 defExpReg ::=
-    identificador:id ASIGNA defNotacionRegex:a PTCOMA
+    identificador:id GUION MAYOR defNotacionRegex:a PTCOMA
+{:
+    parser.identificador += 1;
+    Nodo finaliza = new Nodo("#", null, null, "#", String.valueOf(identificador));
+    Nodo raiz = new Nodo(".", a, finaliza, "1000", null);
+    Arbol arbolito = new Arbol(id, raiz);
+    Arbol.getAlfabeto(arbolito, arbolito.root);
+    Arbol.getHoja(arbolito);
+    Arbol.setAnulables(arbolito.root);
+    Arbol.setPrimeros(arbolito.root);
+    Arbol.setUltimos(arbolito.root);
+    Arbol.getSiguientes(arbolito, arbolito.root);
+    Arbol.esteticaSiguientes(arbolito);
+    Arbol.tablaTransiciones(arbolito);
+
+    arbolito.conjuntos = (LinkedList)parser.conjuntos.clone();
+    arbolito.conjuntos.add(new Conjunto("sueltos", parser.sueltos));
+
+    Arbol.imprimirArbol(arbolito);
+    Arbol.graficarAFD(arbolito);
+    Arbol.reporteSiguienes(arbolito);
+    Arbol.reporteTransiciones(arbolito);
+
+    parser.Arboles.add(arbolito);
+
+    for(int i = 0; i < arbolito.conjuntos.size(); i++){
+        System.out.println(arbolito.conjuntos.get(i).nombre);
+    }
+
+    parser.sueltos.clear();
+    parser.identificador = 0;
+    parser.identificadorNodos = 0;
+:}
 ;
 
 defNotacionRegex ::=
@@ -156,7 +177,6 @@ defNotacionRegex ::=
     parser.identificadorNodos += 1; 
     RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
     if(!parser.nombresUtilizados.contains(hoja)){
-        System.out.println("nombre de Conjunto insertado: " + hoja);
         parser.nombresUtilizados.add(hoja);
     }:}
  |  CONCAT defNotacionRegex:izq defNotacionRegex:der     
@@ -179,7 +199,12 @@ defNotacionRegex ::=
     parser.identificador += 1; 
     RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
     parser.guardarAlfabeto(hoja.replaceAll("\"", ""));:}
- |  COMILLADOB identificador:hoja COMILLADOB                  
+ |  COMILLADOB CARACTER:hoja COMILLADOB                  
+    {:parser.identificadorNodos += 1; 
+    parser.identificador += 1; 
+    RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
+    parser.guardarAlfabeto(hoja);:}
+|  COMILLADOB CARESP:hoja COMILLADOB                  
     {:parser.identificadorNodos += 1; 
     parser.identificador += 1; 
     RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
