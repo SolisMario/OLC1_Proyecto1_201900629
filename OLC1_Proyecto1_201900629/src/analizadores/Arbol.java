@@ -23,7 +23,7 @@ public class Arbol {
     LinkedList<String> alfabeto = new LinkedList<>();
     LinkedList<String> transiciones = new LinkedList<>();
     LinkedList<String> estadosAceptacion = new LinkedList<>();
-    LinkedList<Conjunto> conjuntos = new LinkedList<>();
+    Conjunto sueltos;
     int identificadorAFN = 0;
 
     public Arbol(String nombreRegex, Nodo root) {
@@ -51,7 +51,7 @@ public class Arbol {
         Nodo tmp = null;
         tmp = arbol.root;
 
-        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + ".dot";
+        String nombreDot = "DOT/" + arbol.nombreRegex + ".dot";
         String nombrePng = arbol.nombreRegex + ".png";
 
         File archivo = new File(nombreDot);
@@ -437,7 +437,7 @@ public class Arbol {
         LinkedList<String> tablaTrancisiones = arbol.transiciones;
         LinkedList<String> estadosAceptacion = arbol.estadosAceptacion;
 
-        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + "AFD.dot";
+        String nombreDot = "DOT/" + arbol.nombreRegex + "AFD.dot";
         String nombrePng = arbol.nombreRegex + "AFD.png";
 
         File archivo = new File(nombreDot);
@@ -485,7 +485,7 @@ public class Arbol {
     public static void reporteSiguienes(Arbol arbol) throws IOException {
         LinkedList<String> tablaSiguientes = arbol.siguientes;
 
-        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + "Sig.dot";
+        String nombreDot = "DOT/" + arbol.nombreRegex + "Sig.dot";
         String nombrePng = arbol.nombreRegex + "sig.png";
 
         File archivo = new File(nombreDot);
@@ -526,7 +526,7 @@ public class Arbol {
     public static void reporteTransiciones(Arbol arbol) throws IOException {
         LinkedList<String> tabTransicion = arbol.transiciones;
 
-        String nombreDot = "Archivos DOT/" + arbol.nombreRegex + "Trans.dot";
+        String nombreDot = "DOT/" + arbol.nombreRegex + "Trans.dot";
         String nombrePng = arbol.nombreRegex + "Trans.png";
 
         File archivo = new File(nombreDot);
@@ -577,9 +577,10 @@ public class Arbol {
         return estado;
     }
 
-    public static void validarCadena(Arbol arbol, String cadenaEvaluar) {
+    public static void validarCadena(Arbol arbol, String cadenaEvaluar, LinkedList listaConjuntos) {
         LinkedList<String> posibleTransicion = new LinkedList<>();
         LinkedList<String> transiciones = arbol.transiciones;
+        LinkedList<Conjunto> conjuntos = listaConjuntos;
 
         boolean valida = false;
         boolean rama = true;
@@ -607,9 +608,9 @@ public class Arbol {
             for (int j = 0; j < posibleTransicion.size(); j++) {
                 boolean matchName = false;
                 String[] partesTransi = posibleTransicion.get(j).split("\\~");
-                for (int k = 0; k < arbol.conjuntos.size(); k++) {
-                    if(partesTransi[1].replaceAll("\"", "").equals(arbol.conjuntos.get(k).nombre.replaceAll("\"", ""))){
-                        if(arbol.conjuntos.get(k).componentes.contains(String.valueOf(cadenaEvaluar.charAt(i)))){
+                for (int k = 0; k < conjuntos.size(); k++) {
+                    if(partesTransi[1].replaceAll("\"", "").equals(conjuntos.get(k).nombre.replaceAll("\"", ""))){
+                        if(conjuntos.get(k).componentes.contains(String.valueOf(cadenaEvaluar.charAt(i)))){
                             matchName = true;
                             break;
                         }
@@ -645,7 +646,7 @@ public class Arbol {
         LinkedList<String> pilaPartes = new LinkedList<>();
         int identificador = 0;
 
-        String nombreDot = "Archivos DOT/" +  arbol.nombreRegex + "AFN.dot";
+        String nombreDot = "DOT/" +  arbol.nombreRegex + "AFN.dot";
         String nombrePng = arbol.nombreRegex + "AFN.png";
 
         File archivo = new File(nombreDot);

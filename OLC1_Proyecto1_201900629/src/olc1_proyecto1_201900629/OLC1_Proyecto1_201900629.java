@@ -6,29 +6,41 @@
 package olc1_proyecto1_201900629;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.LinkedList;
+import analizadores.Arbol;
+import analizadores.Conjunto;
+import analizadores.Lexema;
 
 /**
  *
  * @author Mario Josue Solis Solorzano
  */
 public class OLC1_Proyecto1_201900629 {
+    
+    public static File dot = new File("DOT");
+    public static File arboles = new File("ARBOLES_201900629");
+    public static File afnds = new File("AFND_201900629");
+    public static File siguientes = new File("SIGUIENTES_201900629");
+    public static File transiciones = new File("TRANSICIONES_201900629");
+    public static File afds = new File("AFD_201900629");
+    public static File errores = new File("ERRORES_201900629");
+    public static File salidas = new File("SALIDAS_201900629");
+
+    /**
+     *
+     */
+    public static LinkedList<String> listaNombresArboles = new LinkedList<>();
+    public static LinkedList<Arbol> listaArboles = new LinkedList<Arbol>();
+    public static LinkedList<Conjunto> listaConjuntos = new LinkedList<Conjunto>();
+    public static LinkedList<Lexema> listaLexemas = new LinkedList<Lexema>();
 
     /**
      * @param args the command line arguments
+     * @throws java.io.FileNotFoundException
      */
     public static void main(String[] args) throws FileNotFoundException, Exception {
         // TODO code application logic here
-        File arboles = new File("ARBOLES_201900629");
-        File afnds = new File("AFND_201900629");
-        File siguientes = new File("SIGUIENTES_201900629");
-        File transiciones = new File("TRANSICIONES_201900629");
-        File afds = new File("AFD_201900629");
-        File errores = new File("ERRORES_201900629");
-        File salidas = new File("SALIDAS_201900629");
-        File dot = new File("Archivos DOT");
-        
         if (!arboles.exists()) {
             if (arboles.mkdirs()) {
             }
@@ -62,20 +74,7 @@ public class OLC1_Proyecto1_201900629 {
             }
         }
         
-        interpretar("entrada.txt");
         InterfazGrafica inter = new InterfazGrafica();
         inter.setVisible(true);
-    }
-
-    /**
-     * Método que interpreta el contenido del archivo que se encuentra en el
-     * path que recibe como parámentro
-     *
-     * @param path ruta del archivo a interpretar
-     */
-    private static void interpretar(String path) throws FileNotFoundException, Exception {
-        analizadores.Sintactico pars;
-            pars = new analizadores.Sintactico(new analizadores.Lexico(new FileInputStream(path)));
-            pars.parse();
     }
 }

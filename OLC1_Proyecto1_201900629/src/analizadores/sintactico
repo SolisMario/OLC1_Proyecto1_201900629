@@ -11,12 +11,9 @@ import java.util.LinkedList;
 parser code 
 {:
     //Variable utilizada para almacenar los arboles
-    public LinkedList<Arbol> Arboles = new LinkedList<Arbol>();
     public LinkedList<String> nombresConjuntos = new LinkedList<>();
     public LinkedList<String> nombresUtilizados = new LinkedList<>();
-    public LinkedList<Conjunto> conjuntos = new LinkedList<Conjunto>();
     public LinkedList<String> sueltos = new LinkedList<>();
-    public LinkedList<String> palabras = new LinkedList<>();
 
 
     public int identificador = 0;
@@ -40,10 +37,6 @@ parser code
         " no reconocido."); 
     }
 
-    public LinkedList<Arbol> getArboles() {
-        return Arboles;
-    }
-
     public void guardarConjunto(String nombre, String cadena) {
         if (!nombresConjuntos.contains(nombre)) {
             LinkedList<String> elementos = new LinkedList<>();
@@ -62,7 +55,7 @@ parser code
                 }
             }
             Conjunto conjunto = new Conjunto(nombre, elementos);
-            conjuntos.add(conjunto);
+            olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaConjuntos.add(conjunto);
         }
     }
 
@@ -138,6 +131,7 @@ defNotacion ::=
 defExpReg ::=
     identificador:id GUION MAYOR defNotacionRegex:a PTCOMA
 {:
+    if(!olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaNombresArboles.contains(id)){            
     parser.identificador += 1;
     Nodo finaliza = new Nodo("#", null, null, "#", String.valueOf(identificador));
     Nodo raiz = new Nodo(".", a, finaliza, "1000", null);
@@ -151,20 +145,16 @@ defExpReg ::=
     Arbol.esteticaSiguientes(arbolito);
     Arbol.tablaTransiciones(arbolito);
 
-    arbolito.conjuntos = (LinkedList)parser.conjuntos.clone();
-    arbolito.conjuntos.add(new Conjunto("sueltos", parser.sueltos));
+    arbolito.sueltos  = new Conjunto("sueltos", parser.sueltos);
 
     Arbol.imprimirArbol(arbolito);
     Arbol.graficarAFD(arbolito);
     Arbol.reporteSiguienes(arbolito);
     Arbol.reporteTransiciones(arbolito);
 
-    parser.Arboles.add(arbolito);
-
-    for(int i = 0; i < arbolito.conjuntos.size(); i++){
-        System.out.println(arbolito.conjuntos.get(i).nombre);
-    }
-
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaArboles.add(arbolito);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaNombresArboles.add(id);
+}
     parser.sueltos.clear();
     parser.identificador = 0;
     parser.identificadorNodos = 0;
@@ -213,8 +203,20 @@ defNotacionRegex ::=
 ;
 
 expEvaluar ::=
-    IDENTIFICADOR DOSPT COMILLADOB LEXEMA COMILLADOB PTCOMA expEvaluar
- |  IDENTIFICADOR DOSPT COMILLADOB LEXEMA COMILLADOB PTCOMA
- |  IDENTIFICADOR DOSPT COMILLADOB identificador COMILLADOB PTCOMA expEvaluar
- |  IDENTIFICADOR DOSPT COMILLADOB identificador COMILLADOB PTCOMA
+    IDENTIFICADOR:id DOSPT COMILLADOB LEXEMA:lex COMILLADOB PTCOMA expEvaluar
+    {:Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    :}
+ |  IDENTIFICADOR:id DOSPT COMILLADOB LEXEMA:lex COMILLADOB PTCOMA
+    {:Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    :}
+ |  IDENTIFICADOR:id DOSPT COMILLADOB identificador:lex COMILLADOB PTCOMA expEvaluar
+    {:Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    :}
+ |  IDENTIFICADOR:id DOSPT COMILLADOB identificador:lex COMILLADOB PTCOMA
+    {:Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    :}
 ;

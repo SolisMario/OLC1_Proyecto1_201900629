@@ -192,12 +192,9 @@ public class Sintactico extends java_cup.runtime.lr_parser {
 
 
     //Variable utilizada para almacenar los arboles
-    public LinkedList<Arbol> Arboles = new LinkedList<Arbol>();
     public LinkedList<String> nombresConjuntos = new LinkedList<>();
     public LinkedList<String> nombresUtilizados = new LinkedList<>();
-    public LinkedList<Conjunto> conjuntos = new LinkedList<Conjunto>();
     public LinkedList<String> sueltos = new LinkedList<>();
-    public LinkedList<String> palabras = new LinkedList<>();
 
 
     public int identificador = 0;
@@ -221,10 +218,6 @@ public class Sintactico extends java_cup.runtime.lr_parser {
         " no reconocido."); 
     }
 
-    public LinkedList<Arbol> getArboles() {
-        return Arboles;
-    }
-
     public void guardarConjunto(String nombre, String cadena) {
         if (!nombresConjuntos.contains(nombre)) {
             LinkedList<String> elementos = new LinkedList<>();
@@ -243,7 +236,7 @@ public class Sintactico extends java_cup.runtime.lr_parser {
                 }
             }
             Conjunto conjunto = new Conjunto(nombre, elementos);
-            conjuntos.add(conjunto);
+            olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaConjuntos.add(conjunto);
         }
     }
 
@@ -541,6 +534,7 @@ class CUP$Sintactico$actions {
 		int aright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-1)).right;
 		Nodo a = (Nodo)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-1)).value;
 		
+    if(!olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaNombresArboles.contains(id)){            
     parser.identificador += 1;
     Nodo finaliza = new Nodo("#", null, null, "#", String.valueOf(identificador));
     Nodo raiz = new Nodo(".", a, finaliza, "1000", null);
@@ -554,20 +548,16 @@ class CUP$Sintactico$actions {
     Arbol.esteticaSiguientes(arbolito);
     Arbol.tablaTransiciones(arbolito);
 
-    arbolito.conjuntos = (LinkedList)parser.conjuntos.clone();
-    arbolito.conjuntos.add(new Conjunto("sueltos", parser.sueltos));
+    arbolito.sueltos  = new Conjunto("sueltos", parser.sueltos);
 
     Arbol.imprimirArbol(arbolito);
     Arbol.graficarAFD(arbolito);
     Arbol.reporteSiguienes(arbolito);
     Arbol.reporteTransiciones(arbolito);
 
-    parser.Arboles.add(arbolito);
-
-    for(int i = 0; i < arbolito.conjuntos.size(); i++){
-        System.out.println(arbolito.conjuntos.get(i).nombre);
-    }
-
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaArboles.add(arbolito);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaNombresArboles.add(id);
+}
     parser.sueltos.clear();
     parser.identificador = 0;
     parser.identificadorNodos = 0;
@@ -714,7 +704,15 @@ class CUP$Sintactico$actions {
           case 30: // expEvaluar ::= IDENTIFICADOR DOSPT COMILLADOB LEXEMA COMILLADOB PTCOMA expEvaluar 
             {
               Object RESULT =null;
-
+		int idleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).value;
+		int lexleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-3)).left;
+		int lexright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-3)).right;
+		String lex = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-3)).value;
+		Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expEvaluar",7, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
@@ -723,7 +721,15 @@ class CUP$Sintactico$actions {
           case 31: // expEvaluar ::= IDENTIFICADOR DOSPT COMILLADOB LEXEMA COMILLADOB PTCOMA 
             {
               Object RESULT =null;
-
+		int idleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)).value;
+		int lexleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).left;
+		int lexright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).right;
+		String lex = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).value;
+		Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expEvaluar",7, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
@@ -732,7 +738,15 @@ class CUP$Sintactico$actions {
           case 32: // expEvaluar ::= IDENTIFICADOR DOSPT COMILLADOB identificador COMILLADOB PTCOMA expEvaluar 
             {
               Object RESULT =null;
-
+		int idleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)).value;
+		int lexleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-3)).left;
+		int lexright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-3)).right;
+		String lex = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-3)).value;
+		Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expEvaluar",7, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-6)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
@@ -741,7 +755,15 @@ class CUP$Sintactico$actions {
           case 33: // expEvaluar ::= IDENTIFICADOR DOSPT COMILLADOB identificador COMILLADOB PTCOMA 
             {
               Object RESULT =null;
-
+		int idleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)).left;
+		int idright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)).right;
+		String id = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)).value;
+		int lexleft = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).left;
+		int lexright = ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).right;
+		String lex = (String)((java_cup.runtime.Symbol) CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-2)).value;
+		Lexema lexema = new Lexema(id, lex);
+    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
+    
               CUP$Sintactico$result = parser.getSymbolFactory().newSymbol("expEvaluar",7, ((java_cup.runtime.Symbol)CUP$Sintactico$stack.elementAt(CUP$Sintactico$top-5)), ((java_cup.runtime.Symbol)CUP$Sintactico$stack.peek()), RESULT);
             }
           return CUP$Sintactico$result;
