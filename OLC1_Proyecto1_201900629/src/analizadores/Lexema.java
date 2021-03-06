@@ -10,8 +10,8 @@ package analizadores;
  * @author Mario Josue Solis Solorzano
  */
 public class Lexema {
-    String regex = null;
-    String lexema = null;
+    public String regex = null;
+    public String lexema = null;
 
     public Lexema(String regex, String lexema) {
         this.lexema = lexema;

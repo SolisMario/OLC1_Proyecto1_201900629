@@ -5,6 +5,8 @@
  */
 package olc1_proyecto1_201900629;
 
+import analizadores.Arbol;
+import analizadores.Lexema;
 import java.awt.event.ItemEvent;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -103,9 +105,18 @@ public class InterfazGrafica extends javax.swing.JFrame {
     public void traerImagenes(String tipoImagenes) {
         if (tipoImagenes.equals("Arboles")) {
             listaImagenes = OLC1_Proyecto1_201900629.arboles.listFiles();
-            for (int i = 0; i < listaImagenes.length; i++) {
-                System.out.println(listaImagenes[i]);
-            }
+        }
+        else if (tipoImagenes.equals("Siguientes")) {
+            listaImagenes = OLC1_Proyecto1_201900629.siguientes.listFiles();
+        }
+        else if (tipoImagenes.equals("Trancisiones")) {
+            listaImagenes = OLC1_Proyecto1_201900629.transiciones.listFiles();
+        }
+        else if (tipoImagenes.equals("Automatas Deterministas")) {
+            listaImagenes = OLC1_Proyecto1_201900629.afds.listFiles();
+        }
+        else if (tipoImagenes.equals("Automatas no Deterministas")) {
+            listaImagenes = OLC1_Proyecto1_201900629.afnds.listFiles();
         }
     }
 
@@ -121,8 +132,6 @@ public class InterfazGrafica extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtEntrada = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree();
         btnGenerarAutomatas = new javax.swing.JButton();
         btnAnalizarCadenas = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
@@ -148,8 +157,6 @@ public class InterfazGrafica extends javax.swing.JFrame {
         txtEntrada.setRows(5);
         jScrollPane1.setViewportView(txtEntrada);
 
-        jScrollPane2.setViewportView(jTree1);
-
         btnGenerarAutomatas.setText("Generar Autómatas");
         btnGenerarAutomatas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,6 +165,11 @@ public class InterfazGrafica extends javax.swing.JFrame {
         });
 
         btnAnalizarCadenas.setText("Analizar Cadenas");
+        btnAnalizarCadenas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnalizarCadenasActionPerformed(evt);
+            }
+        });
 
         txtSalida.setColumns(20);
         txtSalida.setRows(5);
@@ -170,6 +182,11 @@ public class InterfazGrafica extends javax.swing.JFrame {
         jComboBox1.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 jComboBox1ItemStateChanged(evt);
+            }
+        });
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
             }
         });
 
@@ -235,57 +252,56 @@ public class InterfazGrafica extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(341, 341, 341))
-                    .addGroup(layout.createSequentialGroup()
+                    .addComponent(jScrollPane3)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1220, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(btnGenerarAutomatas)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnAnalizarCadenas))
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1))
+                        .addGap(48, 48, 48)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(btnGenerarAutomatas)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(btnAnalizarCadenas))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane2)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                        .addComponent(btnImgAnterior)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(lblNombreImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btnImgSiguiente))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addContainerGap())))
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnImgAnterior)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lblNombreImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 367, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(btnImgSiguiente))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 550, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22)
+                        .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(jScrollPane4))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap()
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(22, 22, 22)
+                        .addComponent(jScrollPane4)))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnImgAnterior)
-                    .addComponent(btnImgSiguiente)
-                    .addComponent(btnGenerarAutomatas)
-                    .addComponent(btnAnalizarCadenas)
-                    .addComponent(lblNombreImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnImgAnterior)
+                        .addComponent(btnGenerarAutomatas)
+                        .addComponent(btnAnalizarCadenas))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnImgSiguiente)
+                        .addComponent(lblNombreImagen, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -324,7 +340,6 @@ public class InterfazGrafica extends javax.swing.JFrame {
                 Logger.getLogger(InterfazGrafica.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        System.out.println(OLC1_Proyecto1_201900629.listaLexemas);
     }//GEN-LAST:event_btnGenerarAutomatasActionPerformed
 
     private void mnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnNuevoActionPerformed
@@ -413,6 +428,28 @@ public class InterfazGrafica extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnImgAnteriorActionPerformed
 
+    private void btnAnalizarCadenasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarCadenasActionPerformed
+        // TODO add your handling code here:
+        if(OLC1_Proyecto1_201900629.listaLexemas.size() > 0){
+            for (int i = 0; i < OLC1_Proyecto1_201900629.listaLexemas.size(); i++) {
+                Lexema lex = OLC1_Proyecto1_201900629.listaLexemas.get(i);
+                String regex = lex.regex;
+                int indiceArbol = OLC1_Proyecto1_201900629.listaNombresArboles.indexOf(regex);
+                Arbol arbolito = OLC1_Proyecto1_201900629.listaArboles.get(indiceArbol);
+                boolean validacion = Arbol.validarCadena(arbolito, lex.lexema, OLC1_Proyecto1_201900629.listaConjuntos);
+                if(validacion){
+                    txtSalida.append("La expresión: \"" + lex.lexema + "\" es válida con la expresion regular " + lex.regex + ".\n");
+                }else{
+                    txtSalida.append("La expresión: \"" + lex.lexema + "\" no es válida con la expresion regular " + lex.regex + ".\n");
+                }
+            }
+        }
+    }//GEN-LAST:event_btnAnalizarCadenasActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -457,10 +494,8 @@ public class InterfazGrafica extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTree jTree1;
     private javax.swing.JMenu jmArchivo;
     private javax.swing.JLabel lblImagen;
     private javax.swing.JLabel lblNombreImagen;

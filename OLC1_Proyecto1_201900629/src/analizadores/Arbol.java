@@ -477,9 +477,6 @@ public class Arbol {
         bw.close();
 
         Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o AFD_201900629/" + nombrePng);
-        
-        graficarAFN(arbol);
-
     }
 
     public static void reporteSiguienes(Arbol arbol) throws IOException {
@@ -577,7 +574,7 @@ public class Arbol {
         return estado;
     }
 
-    public static void validarCadena(Arbol arbol, String cadenaEvaluar, LinkedList listaConjuntos) {
+    public static boolean validarCadena(Arbol arbol, String cadenaEvaluar, LinkedList listaConjuntos) {
         LinkedList<String> posibleTransicion = new LinkedList<>();
         LinkedList<String> transiciones = arbol.transiciones;
         LinkedList<Conjunto> conjuntos = listaConjuntos;
@@ -636,134 +633,9 @@ public class Arbol {
         }
                 
         if (!valida || truncada) {
-            System.out.println("La cadena no es valida");
+            return false;
         } else {
-            System.out.println("la cadena es valida");
+            return true;
         }
     }   
-    
-    public static void graficarAFN(Arbol arbol) throws IOException{
-        LinkedList<String> pilaPartes = new LinkedList<>();
-        int identificador = 0;
-
-        String nombreDot = "DOT/" +  arbol.nombreRegex + "AFN.dot";
-        String nombrePng = arbol.nombreRegex + "AFN.png";
-
-        File archivo = new File(nombreDot);
-        FileWriter fw = new FileWriter(archivo);
-        BufferedWriter bw = new BufferedWriter(fw);
-
-        bw.write("digraph afd {\n");
-        bw.write("rankdir=LR;\n");
-
-        bw.close();
-
-        partesAFN(arbol.root.izquierdo, pilaPartes, arbol, nombreDot);
-
-        FileWriter fw2 = new FileWriter(archivo, true);
-        BufferedWriter bw2 = new BufferedWriter(fw2);
-
-        bw2.write("}");
-        bw2.close();
-
-        Runtime.getRuntime().exec("dot -Tpng " + nombreDot + " -o AFND_201900629/" + nombrePng);
-    }
-    
-    public static void partesAFN(Nodo raiz, LinkedList<String> partes, Arbol arbol, String nombreDot) throws IOException{
-        Nodo tmp = raiz;
-        if(tmp != null){
-            partesAFN(raiz.izquierdo, partes, arbol, nombreDot);
-            partesAFN(raiz.derecho, partes, arbol, nombreDot);            
-            File archivo = new File(nombreDot);
-            FileWriter fw = new FileWriter(archivo, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-        
-        if(tmp.simbolo.equals("|")){
-            arbol.identificadorAFN++;
-            String nodoInicio = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoInicio + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            String inicioNodoA = partes.get(partes.size() - 1).split("_")[0];
-            String inicioNodoB = partes.get(partes.size() - 2).split("_")[0];
-            String finNodoA = partes.get(partes.size() - 1).split("_")[1];
-            String finNodobB = partes.get(partes.size() - 2).split("_")[1];
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + inicioNodoB + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            arbol.identificadorAFN++;
-            String nodoFin = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoFin + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            bw.write("\"" + finNodoA + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            bw.write("\"" + finNodobB + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            partes.removeLast();
-            partes.removeLast();
-            partes.add(nodoInicio + "_" + nodoFin);
-        }
-        else if(tmp.simbolo.equals("*")){
-            arbol.identificadorAFN++;
-            String nodoInicio = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoInicio + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            String inicioNodoA = partes.get(partes.size() - 1).split("_")[0];
-            String finNodoA = partes.get(partes.size() - 1).split("_")[1];
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            arbol.identificadorAFN++;
-            String nodoFin = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoFin + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            bw.write("\"" + finNodoA + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + " constraint=false]\n");
-            bw.write("\"" + finNodoA + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + " constraint=false]\n");
-            partes.removeLast();
-            partes.add(nodoInicio + "_" + nodoFin);
-        }
-        else if(tmp.simbolo.equals("+")){
-            arbol.identificadorAFN++;
-            String nodoInicio = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoInicio + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            String inicioNodoA = partes.get(partes.size() - 1).split("_")[0];
-            String finNodoA = partes.get(partes.size() - 1).split("_")[1];
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            arbol.identificadorAFN++;
-            String nodoFin = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoFin + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            bw.write("\"" + finNodoA + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            bw.write("\"" + finNodoA + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + " constraint=false]\n");
-            partes.removeLast();
-            partes.add(nodoInicio + "_" + nodoFin);
-        }
-        else if(tmp.simbolo.equals("?")){
-            arbol.identificadorAFN++;
-            String nodoInicio = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoInicio + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            String inicioNodoA = partes.get(partes.size() - 1).split("_")[0];
-            String finNodoA = partes.get(partes.size() - 1).split("_")[1];
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + inicioNodoA + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            arbol.identificadorAFN++;
-            String nodoFin = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoFin + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            bw.write("\"" + finNodoA + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + "$" + "\"" + " constraint=false]\n");
-            partes.removeLast();
-            partes.add(nodoInicio + "_" + nodoFin);
-        }
-        else if(tmp.simbolo.equals(".")){
-            String inicioNodoA = partes.get(partes.size() - 2).split("_")[0];
-            String inicioNodoB = partes.get(partes.size() - 1).split("_")[0];
-            String finNodoA = partes.get(partes.size() - 2).split("_")[1];
-            String finNodobB = partes.get(partes.size() - 1).split("_")[1];
-            bw.write("\"" + finNodoA + "\"" + "->" + "\"" + inicioNodoB + "\"" + "[label="  + "\"" + "$" + "\"" + "]\n");
-            partes.removeLast();
-            partes.removeLast();
-            partes.add(inicioNodoA + "_" + finNodobB);
-        }
-        else if(!tmp.simbolo.equals(".") || !tmp.simbolo.equals("*") || !tmp.simbolo.equals("?") || !tmp.simbolo.equals("+") || !tmp.simbolo.equals("|")){
-            arbol.identificadorAFN++;
-            String nodoInicio = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoInicio + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            arbol.identificadorAFN++;
-            String nodoFin = "nodo" + String.valueOf(arbol.identificadorAFN);
-            bw.write("\"" + nodoFin + "\"" + "[shape=circle,label=\"" + arbol.identificadorAFN + "\"]\n");
-            bw.write("\"" + nodoInicio + "\"" + "->" + "\"" + nodoFin + "\"" + "[label="  + "\"" + tmp.simbolo.replaceAll("\"", "") + "\"" + "]\n");
-            partes.add(nodoInicio + "_" + nodoFin);
-        }
-        bw.close();
-        }
-    }
 }

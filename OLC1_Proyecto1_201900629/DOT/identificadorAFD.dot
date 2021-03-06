@@ -1,0 +1,12 @@
+digraph afd {
+rankdir=LR;
+"S0"[shape=circle,label="S0"]
+"S1"[shape=circle,label="S1"]
+"S1"[shape=doublecircle,label="S1"]
+"S0"->"S1"[label="letra"]
+"S1"->"S1"[label="letra"]
+"S1"->"S1"[label="_"]
+"S1"->"S1"[label="digito"]
+vacio[shape=none, style=invisible]
+vacio -> S0[label="Inicio"]
+}

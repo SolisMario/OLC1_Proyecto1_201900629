@@ -12,8 +12,8 @@ igusername -> . . "@" | {minus} {mayus} * | | | {minus} {mayus} {num} "_" ; // e
        Expresion Regular para una fecha (forma sencilla)
 !>
 fecha -> . {num} . {num} . "/" . {num} . {num} . "/" . {num} . {num} . {num} {num}; 
-erAzar -> . + {simbols} + | {minus} {mayus};
-Pl -   >  . {posibles} . ? "-"  . {digito} . {digito} . {digito}  . {letra}  . {letra} {letra};
+erAzar -> | {minus} {mayus};
+Pl -   >  *?. {simbols}{mayus};
 
 %%
 %%

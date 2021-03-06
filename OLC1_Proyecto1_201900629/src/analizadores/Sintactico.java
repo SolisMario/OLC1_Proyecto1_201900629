@@ -554,6 +554,7 @@ class CUP$Sintactico$actions {
     Arbol.graficarAFD(arbolito);
     Arbol.reporteSiguienes(arbolito);
     Arbol.reporteTransiciones(arbolito);
+    AFN.graficarAFN(arbolito);
 
     olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaArboles.add(arbolito);
     olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaNombresArboles.add(id);
