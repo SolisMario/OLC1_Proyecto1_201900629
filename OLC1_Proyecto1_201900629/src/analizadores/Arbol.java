@@ -412,7 +412,7 @@ public class Arbol {
         if (tmp != null) {
             getAlfabeto(arbol, tmp.izquierdo);
             if (tmp.identificador != null) {
-                if(!arbol.alfabeto.contains(tmp.simbolo) && !tmp.simbolo.equals("#")){
+                if (!arbol.alfabeto.contains(tmp.simbolo) && !tmp.simbolo.equals("#")) {
                     arbol.alfabeto.add(tmp.simbolo);
                 }
             }
@@ -465,7 +465,7 @@ public class Arbol {
                 estadosSiguientes = transicion[2].split(",");
                 for (int j = 0; j < estadosSiguientes.length; j++) {
                     String[] composTransicion = estadosSiguientes[j].split("~");
-                    bw.write("\"" + estadoActual + "\"" + "->" + "\"" + composTransicion[0] + "\"" + "[label="  + "\"" + composTransicion[1].replaceAll("\"", "") + "\"" + "]\n");
+                    bw.write("\"" + estadoActual + "\"" + "->" + "\"" + composTransicion[0] + "\"" + "[label=" + "\"" + composTransicion[1].replaceAll("\"", "") + "\"" + "]\n");
                 }
             }
         }
@@ -584,7 +584,6 @@ public class Arbol {
         boolean truncada = false;
 
         String estadoActual = transiciones.get(0).split("\\|")[0];
-
         for (int i = 0; i < cadenaEvaluar.length(); i++) {
             if (!rama) {
                 truncada = true;
@@ -592,11 +591,14 @@ public class Arbol {
             for (int j = 0; j < transiciones.size(); j++) {
                 String origen = transiciones.get(j).split("\\|")[0];
                 if (estadoActual.equals(origen)) {
-                    String[] posibles = transiciones.get(j).split("\\|")[2].split(",");
-                    for (int k = 0; k < posibles.length; k++) {
-                        posibleTransicion.add(posibles[k]);
+                    try {
+                        String[] posibles = transiciones.get(j).split("\\|")[2].split(",");
+                        for (int k = 0; k < posibles.length; k++) {
+                            posibleTransicion.add(posibles[k]);
+                        }
+                        break;
+                    } catch (Exception e) {
                     }
-                    break;
                 }
             }
             if (posibleTransicion.size() == 0) {
@@ -606,16 +608,25 @@ public class Arbol {
                 boolean matchName = false;
                 String[] partesTransi = posibleTransicion.get(j).split("\\~");
                 for (int k = 0; k < conjuntos.size(); k++) {
-                    if(partesTransi[1].replaceAll("\"", "").equals(conjuntos.get(k).nombre.replaceAll("\"", ""))){
-                        if(conjuntos.get(k).componentes.contains(String.valueOf(cadenaEvaluar.charAt(i)))){
+                    if (partesTransi[1].replaceAll("\"", "").equals(conjuntos.get(k).nombre.replaceAll("\"", ""))) {
+                        if (conjuntos.get(k).componentes.contains(String.valueOf(cadenaEvaluar.charAt(i)))) {
                             matchName = true;
                             break;
                         }
                     }
                 }
-                if(!matchName){
-                    if(partesTransi[1].replaceAll("\"", "").equals(String.valueOf(cadenaEvaluar.charAt(i)))){
+                if (!matchName) {
+                    if (partesTransi[1].replaceAll("\"", "").equals(String.valueOf(cadenaEvaluar.charAt(i)))) {
                         matchName = true;
+                    } else if (partesTransi[1].equals("\\\'") || partesTransi[1].equals("\\\"") || partesTransi[1].equals("\\n")) {
+                        try {
+                            if (cadenaEvaluar.substring(i, i + 2).equals(partesTransi[1])) {
+                                matchName = true;
+                                i++;
+                            }
+                        } catch (Exception e) {
+
+                        }
                     }
                 }
                 if (matchName) {
@@ -627,15 +638,15 @@ public class Arbol {
                 }
             }
         }
-        
+
         if (arbol.estadosAceptacion.contains(estadoActual)) {
             valida = true;
         }
-                
+
         if (!valida || truncada) {
             return false;
         } else {
             return true;
         }
-    }   
+    }
 }

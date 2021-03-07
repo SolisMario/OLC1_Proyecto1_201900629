@@ -28,7 +28,9 @@ import java.util.ArrayList;
 %init} 
   
 
-USORESERVADAS = \"(\.|\*|\+|\?|(\|)|\;|\:|\{|\}|%%|\"|\~|\,|\-)\"
+RESLEX = ("."|"*"|"+"|"?"|"-"|"\ ")
+SALTOS = (\\\"|\\n|\\\')
+USORESERVADAS = \"(\.|\*|\+|\?|(\|)|\;|\:|\{|\}|%%|\"|\~|\,|\-|\ )\"
 CARESP = ([ -\/]|[\:-\@]|[\[-\`]|[\{-\}])
 LETRA = [A-Za-z]
 DIGITO = [0-9]
@@ -44,7 +46,8 @@ COMMMULTILINEA = <!<*([^<!]|[^!]"<"|"!"[^>])*!*!>
 {BLANCOS} { }
 
 
-"CONJ" {return new Symbol(sym.RCONJ,yyline,yychar,yytext());} 
+"CONJ" {return new Symbol(sym.RCONJ,yyline,yychar,yytext());}
+{SALTOS} {return new Symbol(sym.SALTOS,yyline,yychar, yytext());} 
 
 ";" {return new Symbol(sym.PTCOMA,yyline,yychar, yytext());}
 ":" {return new Symbol(sym.DOSPT,yyline,yychar, yytext());} 
@@ -68,7 +71,7 @@ COMMMULTILINEA = <!<*([^<!]|[^!]"<"|"!"[^>])*!*!>
 {CARESP} {return new Symbol(sym.CARESP,yyline,yychar, yytext());} 
 {LETRA}|{DIGITO} {return new Symbol(sym.CARACTER, yyline, yychar, yytext());}
 ({LETRA}|{DIGITO})+ {return new Symbol(sym.IDENTIFICADOR,yyline,yychar, yytext());}
-(({LETRA}|{DIGITO})+|{DD}) {return new Symbol(sym.LEXEMA,yyline,yychar, yytext());}
+({LETRA}|{DIGITO}|{RESLEX})+ {return new Symbol(sym.LEXEMA,yyline,yychar, yytext());}
 {USORESERVADAS} {return new Symbol(sym.USORESERVADAS,yyline,yychar, yytext());}
 
 

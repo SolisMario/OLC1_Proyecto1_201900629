@@ -74,20 +74,20 @@ public class AFN {
                     transiciones.addAll(derecho);
                     break;
                 case "+":
-                    transiciones.addLast(new TransicionAFN(0, "$", 1));
+                    transiciones.addLast(new TransicionAFN(0, "ε", 1));
                     for (int i = 0; i < derecho.size(); i++) {
                         derecho.get(i).inicio++;
                         derecho.get(i).fin++;
                     }
                     fin = derecho.getLast().inicio + 1;
-                    transiciones.add(new TransicionAFN(fin - 1, "$", 1));
+                    transiciones.add(new TransicionAFN(fin - 1, "ε", 1));
                     derecho.getLast().fin = fin;
-                    derecho.getLast().simbolo = "$";
+                    derecho.getLast().simbolo = "ε";
                     transiciones.addAll(derecho);
-                    transiciones.addLast(new TransicionAFN(fin, "$", -1));
+                    transiciones.addLast(new TransicionAFN(fin, "ε", -1));
                     break;
                 case "|":
-                    transiciones.addLast(new TransicionAFN(0, "$", 1));
+                    transiciones.addLast(new TransicionAFN(0, "ε", 1));
                     for (int i = 0; i < izquierdo.size(); i++) {
                         izquierdo.get(i).inicio++;
                         izquierdo.get(i).fin++;
@@ -96,42 +96,42 @@ public class AFN {
                         derecho.get(i).inicio += izquierdo.getLast().inicio + 1;
                         derecho.get(i).fin += izquierdo.getLast().inicio + 1;
                     }
-                    transiciones.add(new TransicionAFN(0, "$", derecho.getFirst().inicio));
+                    transiciones.add(new TransicionAFN(0, "ε", derecho.getFirst().inicio));
                     fin = derecho.getLast().inicio + 1;
                     izquierdo.getLast().fin = fin;
                     derecho.getLast().fin = fin;
-                    izquierdo.getLast().simbolo = "$";
-                    derecho.getLast().simbolo = "$";
+                    izquierdo.getLast().simbolo = "ε";
+                    derecho.getLast().simbolo = "ε";
                     transiciones.addAll(izquierdo);
                     transiciones.addAll(derecho);
                     transiciones.addLast(new TransicionAFN(fin, "", -1));
                     break;
                 case "?":
-                    transiciones.addLast(new TransicionAFN(0, "$", 1));
+                    transiciones.addLast(new TransicionAFN(0, "ε", 1));
                     for (int i = 0; i < derecho.size(); i++) {
                         derecho.get(i).inicio++;
                         derecho.get(i).fin++;
                     }
                     fin = derecho.getLast().inicio + 1;
-                    transiciones.add(new TransicionAFN(0, "$", fin));
+                    transiciones.add(new TransicionAFN(0, "ε", fin));
                     derecho.getLast().fin = fin;
-                    derecho.getLast().simbolo = "$";
+                    derecho.getLast().simbolo = "ε";
                     transiciones.addAll(derecho);
-                    transiciones.addLast(new TransicionAFN(fin, "$", -1));
+                    transiciones.addLast(new TransicionAFN(fin, "ε", -1));
                     break;
                 case "*":
-                    transiciones.addLast(new TransicionAFN(0, "$", 1));
+                    transiciones.addLast(new TransicionAFN(0, "ε", 1));
                     for (int i = 0; i < derecho.size(); i++) {
                         derecho.get(i).inicio++;
                         derecho.get(i).fin++;
                     }
                     fin = derecho.getLast().inicio+ 1;
-                    transiciones.add(new TransicionAFN(0, "$", fin));
-                    transiciones.add(new TransicionAFN(fin - 1, "$", 1));
+                    transiciones.add(new TransicionAFN(0, "ε", fin));
+                    transiciones.add(new TransicionAFN(fin - 1, "ε", 1));
                     derecho.getLast().fin = fin;
-                    derecho.getLast().simbolo = "$";
+                    derecho.getLast().simbolo = "ε";
                     transiciones.addAll(derecho);
-                    transiciones.addLast(new TransicionAFN(fin, "$", -1));
+                    transiciones.addLast(new TransicionAFN(fin, "ε", -1));
                     break;
                 default:
                     TransicionAFN transSimbolo = new TransicionAFN(0, tmp.simbolo, 1);

@@ -9,10 +9,11 @@ package analizadores;
 public class sym {
   /* terminals */
   public static final int CEROUNA = 16;
+  public static final int SALTOS = 22;
   public static final int GUION = 3;
   public static final int DOSPT = 7;
   public static final int UNOMAS = 15;
-  public static final int RCONJ = 22;
+  public static final int RCONJ = 23;
   public static final int CONCAT = 12;
   public static final int CARACTER = 17;
   public static final int LLAVEIZQ = 5;
@@ -54,6 +55,7 @@ public class sym {
   "LEXEMA",
   "CARESP",
   "USORESERVADAS",
+  "SALTOS",
   "RCONJ"
   };
 }

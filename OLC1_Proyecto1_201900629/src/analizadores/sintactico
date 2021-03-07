@@ -77,7 +77,7 @@ terminal String PTCOMA, GUION, MAYOR;
 terminal String LLAVEIZQ, LLAVEDER, DOSPT, PORCENTDOB;
 terminal String COMILLADOB, VIRGULILLA, COMA;
 terminal String CONCAT, DISYUNC, CEROMAS, UNOMAS, CEROUNA; 
-terminal String CARACTER, IDENTIFICADOR, LEXEMA, CARESP, USORESERVADAS;
+terminal String CARACTER, IDENTIFICADOR, LEXEMA, CARESP, USORESERVADAS, SALTOS;
 terminal String RCONJ;
 
 non terminal ini;
@@ -88,12 +88,13 @@ non terminal String defNotacion;
 non terminal defExpReg;
 non terminal Nodo defNotacionRegex;
 non terminal expEvaluar;
-non terminal String identificador;
+non terminal String expresion;
 
 start with ini;
 
 ini::=
     LLAVEIZQ cuerpo LLAVEDER
+ |  error ini
 ;
 
 cuerpo::=
@@ -109,19 +110,19 @@ declaraciones ::=
 ;
 
 defConjunto ::= 
-   RCONJ DOSPT identificador:id GUION MAYOR defNotacion:a PTCOMA
+   RCONJ DOSPT IDENTIFICADOR:id GUION MAYOR defNotacion:a PTCOMA
 {:
     parser.guardarConjunto(id, a);
 :}
 ;
 
-identificador ::=
-    IDENTIFICADOR:a                 {:RESULT=a ;:}
- |  CARESP:a identificador:b        {:RESULT=a + b ;:}
- |  IDENTIFICADOR:a identificador:b {:RESULT=a+b ;:}
- |  CARESP:a                        {:RESULT=a ;:}
- |  CARACTER:a                      {:RESULT=a ;:}
- |  CARACTER:a identificador:b      {:RESULT=a+b ;:}
+expresion ::=
+    CARESP:a expresion:b        {:RESULT=a + b ;:}
+ |  IDENTIFICADOR:a expresion:b {:RESULT=a+b ;:}
+ |  LEXEMA:a expresion:b        {:RESULT=a+b ;:}
+ |  CARACTER:a expresion:b      {:RESULT=a+b ;:}
+ |  SALTOS:a expresion:b        {:RESULT=a+b ;:}
+ |  COMILLADOB                  {:RESULT="" ;:}
 ;
 
 defNotacion ::=
@@ -134,7 +135,7 @@ defNotacion ::=
 ;
 
 defExpReg ::=
-    identificador:id GUION MAYOR defNotacionRegex:a PTCOMA
+    IDENTIFICADOR:id GUION MAYOR defNotacionRegex:a PTCOMA
 {:
     if(!olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaNombresArboles.contains(id)){            
     parser.identificador += 1;
@@ -151,6 +152,7 @@ defExpReg ::=
     Arbol.tablaTransiciones(arbolito);
 
     arbolito.sueltos  = new Conjunto("sueltos", parser.sueltos);
+    System.out.println(parser.sueltos);
 
     Arbol.imprimirArbol(arbolito);
     Arbol.graficarAFD(arbolito);
@@ -168,7 +170,7 @@ defExpReg ::=
 ;
 
 defNotacionRegex ::=
-    LLAVEIZQ identificador:hoja LLAVEDER                 
+    LLAVEIZQ IDENTIFICADOR:hoja LLAVEDER                 
     {:parser.identificador += 1; 
     parser.identificadorNodos += 1; 
     RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
@@ -194,7 +196,7 @@ defNotacionRegex ::=
     {:parser.identificadorNodos += 1; 
     parser.identificador += 1; 
     RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
-    parser.guardarAlfabeto(hoja.replaceAll("\"", ""));:}
+    parser.guardarAlfabeto(hoja);:}
  |  COMILLADOB CARACTER:hoja COMILLADOB                  
     {:parser.identificadorNodos += 1; 
     parser.identificador += 1; 
@@ -206,22 +208,20 @@ defNotacionRegex ::=
     RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
     parser.guardarAlfabeto(hoja);
 :}
+|   SALTOS:hoja                   
+    {:parser.identificadorNodos += 1; 
+    parser.identificador += 1; 
+    RESULT=new Nodo(hoja, null, null, String.valueOf(identificadorNodos), String.valueOf(parser.identificador));
+    parser.guardarAlfabeto(hoja);
+:}
 ;
 
 expEvaluar ::=
-    IDENTIFICADOR:id DOSPT COMILLADOB LEXEMA:lex COMILLADOB PTCOMA expEvaluar
+    IDENTIFICADOR:id DOSPT COMILLADOB expresion:lex PTCOMA expEvaluar
     {:Lexema lexema = new Lexema(id, lex);
     olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
     :}
- |  IDENTIFICADOR:id DOSPT COMILLADOB LEXEMA:lex COMILLADOB PTCOMA
-    {:Lexema lexema = new Lexema(id, lex);
-    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
-    :}
- |  IDENTIFICADOR:id DOSPT COMILLADOB identificador:lex COMILLADOB PTCOMA expEvaluar
-    {:Lexema lexema = new Lexema(id, lex);
-    olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
-    :}
- |  IDENTIFICADOR:id DOSPT COMILLADOB identificador:lex COMILLADOB PTCOMA
+ |  IDENTIFICADOR:id DOSPT COMILLADOB expresion:lex PTCOMA
     {:Lexema lexema = new Lexema(id, lex);
     olc1_proyecto1_201900629.OLC1_Proyecto1_201900629.listaLexemas.add(lexema);
     :}

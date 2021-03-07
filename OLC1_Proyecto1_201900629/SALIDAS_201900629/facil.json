@@ -1,0 +1,1 @@
+[{"ExpresionRegular":"decimales","Resultado":"Cadena válida","valor":"1200.31"},{"ExpresionRegular":"decimales","Resultado":"Cadena no válida","valor":"301.59"},{"ExpresionRegular":"identificador","Resultado":"Cadena no válida","valor":"HoLA"},{"ExpresionRegular":"identificador","Resultado":"Cadena válida","valor":"hola_soy_id_1"}]

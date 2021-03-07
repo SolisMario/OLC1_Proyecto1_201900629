@@ -108,17 +108,13 @@ public class InterfazGrafica extends javax.swing.JFrame {
     public void traerImagenes(String tipoImagenes) {
         if (tipoImagenes.equals("Arboles")) {
             listaImagenes = OLC1_Proyecto1_201900629.arboles.listFiles();
-        }
-        else if (tipoImagenes.equals("Siguientes")) {
+        } else if (tipoImagenes.equals("Siguientes")) {
             listaImagenes = OLC1_Proyecto1_201900629.siguientes.listFiles();
-        }
-        else if (tipoImagenes.equals("Transiciones")) {
+        } else if (tipoImagenes.equals("Transiciones")) {
             listaImagenes = OLC1_Proyecto1_201900629.transiciones.listFiles();
-        }
-        else if (tipoImagenes.equals("Automatas Deterministas")) {
+        } else if (tipoImagenes.equals("Automatas Deterministas")) {
             listaImagenes = OLC1_Proyecto1_201900629.afds.listFiles();
-        }
-        else if (tipoImagenes.equals("Automatas no Deterministas")) {
+        } else if (tipoImagenes.equals("Automatas no Deterministas")) {
             listaImagenes = OLC1_Proyecto1_201900629.afnds.listFiles();
         }
     }
@@ -355,21 +351,21 @@ public class InterfazGrafica extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnGenerarAutomatasActionPerformed
 
-    public void Limpiar(){
+    public void Limpiar() {
         OLC1_Proyecto1_201900629.listaNombresArboles.clear();
         OLC1_Proyecto1_201900629.listaArboles.clear();
         OLC1_Proyecto1_201900629.listaConjuntos.clear();
         OLC1_Proyecto1_201900629.listaLexemas.clear();
         txtSalida.setText("");
         traerImagenes(jComboBox1.getSelectedItem().toString());
-        if(listaImagenes.length > 0){
+        if (listaImagenes.length > 0) {
             ImageIcon image = new ImageIcon(listaImagenes[0].getAbsolutePath());
             Icon fondo = image;
             lblImagen.setIcon(fondo);
             lblNombreImagen.setText(listaImagenes[0].getName().replace(".png", ""));
         }
     }
-    
+
     private void mnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnNuevoActionPerformed
         // TODO add your handling code here:
         archivoUsado = null;
@@ -410,11 +406,13 @@ public class InterfazGrafica extends javax.swing.JFrame {
     private void jComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jComboBox1ItemStateChanged
         // TODO add your handling code here:
         if (evt.getStateChange() == ItemEvent.SELECTED) {
-            traerImagenes(jComboBox1.getSelectedItem().toString());
-            ImageIcon image = new ImageIcon(listaImagenes[0].getAbsolutePath());
-            Icon fondo = image;
-            lblImagen.setIcon(fondo);
-            lblNombreImagen.setText(listaImagenes[0].getName().replace(".png", ""));
+            if (listaImagenes.length > 0) {
+                traerImagenes(jComboBox1.getSelectedItem().toString());
+                ImageIcon image = new ImageIcon(listaImagenes[0].getAbsolutePath());
+                Icon fondo = image;
+                lblImagen.setIcon(fondo);
+                lblNombreImagen.setText(listaImagenes[0].getName().replace(".png", ""));
+            }
         }
     }//GEN-LAST:event_jComboBox1ItemStateChanged
 
@@ -458,7 +456,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
 
     private void btnAnalizarCadenasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarCadenasActionPerformed
         // TODO add your handling code here:
-        if(OLC1_Proyecto1_201900629.listaLexemas.size() > 0){
+        if (OLC1_Proyecto1_201900629.listaLexemas.size() > 0) {
             ArrayList<JSONValues> jsons = new ArrayList<>();
             for (int i = 0; i < OLC1_Proyecto1_201900629.listaLexemas.size(); i++) {
                 String strvalida = new String();
@@ -467,19 +465,19 @@ public class InterfazGrafica extends javax.swing.JFrame {
                 int indiceArbol = OLC1_Proyecto1_201900629.listaNombresArboles.indexOf(regex);
                 Arbol arbolito = OLC1_Proyecto1_201900629.listaArboles.get(indiceArbol);
                 boolean validacion = Arbol.validarCadena(arbolito, lex.lexema, OLC1_Proyecto1_201900629.listaConjuntos);
-                if(validacion){
+                if (validacion) {
                     txtSalida.append("La expresión: \"" + lex.lexema + "\" es válida con la expresion regular " + lex.regex + ".\n");
                     strvalida = "Cadena válida";
-                }else{
+                } else {
                     txtSalida.append("La expresión: \"" + lex.lexema + "\" no es válida con la expresion regular " + lex.regex + ".\n");
                     strvalida = "Cadena no válida";
                 }
                 jsons.add(new JSONValues(lex.lexema, lex.regex, strvalida));
             }
             ArchivosSalida resultados = new ArchivosSalida();
-            if(archivo!=null){
+            if (archivo != null) {
                 resultados.escribirJSON(jsons, archivo.getName().replace(".olc", ""));
-            }else{
+            } else {
                 resultados.escribirJSON(jsons, "defaultName");
             }
         }
