@@ -5,8 +5,10 @@
  */
 package olc1_proyecto1_201900629;
 
+import Errores.Excepcion;
 import analizadores.Arbol;
 import analizadores.Lexema;
+import olc1_proyecto1_201900629.JSONValues;
 import java.awt.event.ItemEvent;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
@@ -16,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Icon;
@@ -109,7 +112,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
         else if (tipoImagenes.equals("Siguientes")) {
             listaImagenes = OLC1_Proyecto1_201900629.siguientes.listFiles();
         }
-        else if (tipoImagenes.equals("Trancisiones")) {
+        else if (tipoImagenes.equals("Transiciones")) {
             listaImagenes = OLC1_Proyecto1_201900629.transiciones.listFiles();
         }
         else if (tipoImagenes.equals("Automatas Deterministas")) {
@@ -331,17 +334,42 @@ public class InterfazGrafica extends javax.swing.JFrame {
         // TODO add your handling code here:
         String entrada = txtEntrada.getText();
         if (!entrada.equals("")) {
+            Limpiar();
+            ArrayList<Excepcion> errores = new ArrayList();
             InputStream intstream = new ByteArrayInputStream(entrada.getBytes());
             analizadores.Sintactico pars;
-            pars = new analizadores.Sintactico(new analizadores.Lexico(intstream));
+            analizadores.Lexico lex;
+            lex = new analizadores.Lexico(intstream);
+            pars = new analizadores.Sintactico(lex);
             try {
                 pars.parse();
+                errores.addAll(lex.errores);
+                errores.addAll(pars.errores);
+                for (int i = 0; i < errores.size(); i++) {
+                    ArchivosSalida salida = new ArchivosSalida();
+                    salida.escribirHTML(archivo.getName().replace(".olc", ""), errores);
+                }
             } catch (Exception ex) {
                 Logger.getLogger(InterfazGrafica.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btnGenerarAutomatasActionPerformed
 
+    public void Limpiar(){
+        OLC1_Proyecto1_201900629.listaNombresArboles.clear();
+        OLC1_Proyecto1_201900629.listaArboles.clear();
+        OLC1_Proyecto1_201900629.listaConjuntos.clear();
+        OLC1_Proyecto1_201900629.listaLexemas.clear();
+        txtSalida.setText("");
+        traerImagenes(jComboBox1.getSelectedItem().toString());
+        if(listaImagenes.length > 0){
+            ImageIcon image = new ImageIcon(listaImagenes[0].getAbsolutePath());
+            Icon fondo = image;
+            lblImagen.setIcon(fondo);
+            lblNombreImagen.setText(listaImagenes[0].getName().replace(".png", ""));
+        }
+    }
+    
     private void mnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnNuevoActionPerformed
         // TODO add your handling code here:
         archivoUsado = null;
@@ -431,7 +459,9 @@ public class InterfazGrafica extends javax.swing.JFrame {
     private void btnAnalizarCadenasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarCadenasActionPerformed
         // TODO add your handling code here:
         if(OLC1_Proyecto1_201900629.listaLexemas.size() > 0){
+            ArrayList<JSONValues> jsons = new ArrayList<>();
             for (int i = 0; i < OLC1_Proyecto1_201900629.listaLexemas.size(); i++) {
+                String strvalida = new String();
                 Lexema lex = OLC1_Proyecto1_201900629.listaLexemas.get(i);
                 String regex = lex.regex;
                 int indiceArbol = OLC1_Proyecto1_201900629.listaNombresArboles.indexOf(regex);
@@ -439,9 +469,18 @@ public class InterfazGrafica extends javax.swing.JFrame {
                 boolean validacion = Arbol.validarCadena(arbolito, lex.lexema, OLC1_Proyecto1_201900629.listaConjuntos);
                 if(validacion){
                     txtSalida.append("La expresión: \"" + lex.lexema + "\" es válida con la expresion regular " + lex.regex + ".\n");
+                    strvalida = "Cadena válida";
                 }else{
                     txtSalida.append("La expresión: \"" + lex.lexema + "\" no es válida con la expresion regular " + lex.regex + ".\n");
+                    strvalida = "Cadena no válida";
                 }
+                jsons.add(new JSONValues(lex.lexema, lex.regex, strvalida));
+            }
+            ArchivosSalida resultados = new ArchivosSalida();
+            if(archivo!=null){
+                resultados.escribirJSON(jsons, archivo.getName().replace(".olc", ""));
+            }else{
+                resultados.escribirJSON(jsons, "defaultName");
             }
         }
     }//GEN-LAST:event_btnAnalizarCadenasActionPerformed

@@ -5,7 +5,9 @@
  */
 
 package analizadores;
-import java_cup.runtime.Symbol; 
+import java_cup.runtime.Symbol;
+import Errores.Excepcion;
+import java.util.ArrayList;
 
 %% 
 %class Lexico
@@ -15,9 +17,14 @@ import java_cup.runtime.Symbol;
 %cup 
 %unicode
 
+%{
+    public ArrayList<Excepcion> errores;
+%}
+
 %init{ 
     yyline = 1; 
     yychar = 1; 
+    errores = new ArrayList();
 %init} 
   
 
@@ -66,6 +73,5 @@ COMMMULTILINEA = <!<*([^<!]|[^!]"<"|"!"[^>])*!*!>
 
 
 . {
-    System.out.println("Este es un error lexico: "+yytext()+
-    ", en la linea: "+yyline+", en la columna: "+yychar);
+    errores.add(new Excepcion("Léxico", "El caracter " + yytext() + " no pertence al lenguaje", "" + yyline, "" + yychar));
 }

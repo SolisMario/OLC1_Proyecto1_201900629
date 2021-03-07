@@ -7,6 +7,8 @@ package analizadores;
 
 import java_cup.runtime.*;
 import java.util.LinkedList;
+import java.util.ArrayList;
+import Errores.Excepcion;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -200,10 +202,13 @@ public class Sintactico extends java_cup.runtime.lr_parser {
     public int identificador = 0;
     public int identificadorNodos = 0;
 
+    public ArrayList<Excepcion> errores = new ArrayList();
+
     /**
      * Método al que se llama automáticamente ante algún error sintactico.
      **/ 
     public void syntax_error(Symbol s){ 
+    errores.add(new Excepcion("Sináctico", "Error sintáctico, se detectó: " + s.value, "" + s.left, "" + s.right + ""));
         System.out.println("Error Sintáctico en la Línea " + (s.left) +
         " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
     } 

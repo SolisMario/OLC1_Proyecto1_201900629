@@ -4,7 +4,9 @@
  * Julio - 2018
  */
 package analizadores;
-import java_cup.runtime.Symbol; 
+import java_cup.runtime.Symbol;
+import Errores.Excepcion;
+import java.util.ArrayList;
 
 
 public class Lexico implements java_cup.runtime.Scanner {
@@ -17,6 +19,8 @@ public class Lexico implements java_cup.runtime.Scanner {
 	private final int YY_NO_ANCHOR = 4;
 	private final int YY_BOL = 65536;
 	private final int YY_EOF = 65537;
+
+    public ArrayList<Excepcion> errores;
 	private java.io.BufferedReader yy_reader;
 	private int yy_buffer_index;
 	private int yy_buffer_read;
@@ -57,6 +61,7 @@ public class Lexico implements java_cup.runtime.Scanner {
  
     yyline = 1; 
     yychar = 1; 
+    errores = new ArrayList();
 	}
 
 	private boolean yy_eof_done = false;
@@ -340,8 +345,7 @@ public class Lexico implements java_cup.runtime.Scanner {
 						break;
 					case 5:
 						{
-    System.out.println("Este es un error lexico: "+yytext()+
-    ", en la linea: "+yyline+", en la columna: "+yychar);
+    errores.add(new Excepcion("Léxico", "El caracter " + yytext() + " no pertence al lenguaje", "" + yyline, "" + yychar));
 }
 					case -6:
 						break;

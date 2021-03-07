@@ -74,7 +74,10 @@ public class OLC1_Proyecto1_201900629 {
             }
         }
         
+        
         InterfazGrafica inter = new InterfazGrafica();
         inter.setVisible(true);
+        ArchivosSalida archivos = new ArchivosSalida();
+        archivos.escribirCSS();
     }
 }
