@@ -1,0 +1,49 @@
+digraph tablaSiguientes {
+abc [shape=none, margin=0, label=<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+<TR>
+<TD COLSPAN="2">Hojas</TD>
+<TD>Siguientes</TD>
+</TR>
+<TR>
+<TD>a</TD>
+<TD>1</TD>
+<TD>2</TD>
+</TR>
+<TR>
+<TD>b</TD>
+<TD>2</TD>
+<TD>1,3,4,2,6,7</TD>
+</TR>
+<TR>
+<TD>c</TD>
+<TD>3</TD>
+<TD>4</TD>
+</TR>
+<TR>
+<TD>b</TD>
+<TD>4</TD>
+<TD>1,3,4,5,6,7</TD>
+</TR>
+<TR>
+<TD>a</TD>
+<TD>5</TD>
+<TD>1,3,4,5,6,7</TD>
+</TR>
+<TR>
+<TD>a</TD>
+<TD>6</TD>
+<TD>6,7,8</TD>
+</TR>
+<TR>
+<TD>3</TD>
+<TD>7</TD>
+<TD>6,7,8</TD>
+</TR>
+<TR>
+<TD>#</TD>
+<TD>8</TD>
+<TD>--</TD>
+</TR>
+</TABLE>>];
+}

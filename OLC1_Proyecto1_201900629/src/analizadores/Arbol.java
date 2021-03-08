@@ -24,7 +24,6 @@ public class Arbol {
     LinkedList<String> transiciones = new LinkedList<>();
     LinkedList<String> estadosAceptacion = new LinkedList<>();
     Conjunto sueltos;
-    int identificadorAFN = 0;
 
     public Arbol(String nombreRegex, Nodo root) {
         this.nombreRegex = nombreRegex;
@@ -269,12 +268,15 @@ public class Arbol {
         if (actual.simbolo.equals(".")) {
             String[] ultimosC1 = actual.izquierdo.ultimos.split(",");
             String[] primerosC2 = actual.derecho.primeros.split(",");
-
             for (int i = 0; i < ultimosC1.length; i++) {
                 int ultimo = Integer.parseInt(ultimosC1[i]);
                 int indexUltimo = ultimo - 1;
                 for (int j = 0; j < primerosC2.length; j++) {
-                    arbol.siguientes.set(indexUltimo, arbol.siguientes.get(indexUltimo) + primerosC2[j] + ",");
+                    try {
+                        arbol.siguientes.set(indexUltimo, arbol.siguientes.get(indexUltimo) + primerosC2[j] + ",");
+                    } catch (Exception e) {
+
+                    }
                 }
             }
         } else {
@@ -285,7 +287,11 @@ public class Arbol {
                 int ultimo = Integer.parseInt(ultimosC1[i]);
                 int indexUltimo = ultimo - 1;
                 for (int j = 0; j < primerosC1.length; j++) {
-                    arbol.siguientes.set(indexUltimo, arbol.siguientes.get(indexUltimo) + primerosC1[j] + ",");
+                    try {
+                        arbol.siguientes.set(indexUltimo, arbol.siguientes.get(indexUltimo) + primerosC1[j] + ",");
+                    } catch (Exception e) {
+
+                    }
                 }
             }
         }
@@ -320,9 +326,13 @@ public class Arbol {
                 String transicionAlfabeto = new String();
                 for (int k = 0; k < identificadores.length; k++) {
                     int identificadorIndex = Integer.parseInt(identificadores[k]) - 1;
-                    String simboloIdentificador = arbol.siguientes.get(identificadorIndex).split("\\|")[0];
-                    if (simboloIdentificador.replaceAll("\"", "").equals(arbol.alfabeto.get(j).replaceAll("\"", ""))) {
-                        transicionAlfabeto += arbol.siguientes.get(identificadorIndex).split("\\|")[2] + ",";
+                    try {
+                        String simboloIdentificador = arbol.siguientes.get(identificadorIndex).split("\\|")[0];
+                        if (simboloIdentificador.replaceAll("\"", "").equals(arbol.alfabeto.get(j).replaceAll("\"", ""))) {
+                            transicionAlfabeto += arbol.siguientes.get(identificadorIndex).split("\\|")[2] + ",";
+                        }
+                    } catch (Exception e) {
+
                     }
                 }
 
@@ -497,20 +507,24 @@ public class Arbol {
         bw.write("<TD>Siguientes</TD>\n");
         bw.write("</TR>\n");
         for (int i = 0; i < tablaSiguientes.size(); i++) {
-            if (i < tablaSiguientes.size() - 1) {
-                String[] filaTabla = tablaSiguientes.get(i).split("\\|");
-                bw.write("<TR>\n");
-                bw.write("<TD>" + filaTabla[0] + "</TD>\n");
-                bw.write("<TD>" + filaTabla[1] + "</TD>\n");
-                bw.write("<TD>" + filaTabla[2] + "</TD>\n");
-                bw.write("</TR>\n");
-            } else {
-                String[] filaTabla = tablaSiguientes.get(i).split("\\|");
-                bw.write("<TR>\n");
-                bw.write("<TD>" + filaTabla[0] + "</TD>\n");
-                bw.write("<TD>" + filaTabla[1] + "</TD>\n");
-                bw.write("<TD>--</TD>\n");
-                bw.write("</TR>\n");
+            try {
+                if (i < tablaSiguientes.size() - 1) {
+                    String[] filaTabla = tablaSiguientes.get(i).split("\\|");
+                    bw.write("<TR>\n");
+                    bw.write("<TD>" + filaTabla[0] + "</TD>\n");
+                    bw.write("<TD>" + filaTabla[1] + "</TD>\n");
+                    bw.write("<TD>" + filaTabla[2] + "</TD>\n");
+                    bw.write("</TR>\n");
+                } else {
+                    String[] filaTabla = tablaSiguientes.get(i).split("\\|");
+                    bw.write("<TR>\n");
+                    bw.write("<TD>" + filaTabla[0] + "</TD>\n");
+                    bw.write("<TD>" + filaTabla[1] + "</TD>\n");
+                    bw.write("<TD>--</TD>\n");
+                    bw.write("</TR>\n");
+                }
+            } catch (Exception e) {
+
             }
         }
         bw.write("</TABLE>>];\n");

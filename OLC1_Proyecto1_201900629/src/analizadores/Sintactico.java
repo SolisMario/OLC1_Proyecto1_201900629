@@ -213,19 +213,17 @@ public class Sintactico extends java_cup.runtime.lr_parser {
      **/ 
     public void syntax_error(Symbol s){ 
     errores.add(new Excepcion("Sináctico", "Error sintáctico, se detectó: " + s.value, "" + s.left, "" + s.right + ""));
-        System.out.println("Error Sintáctico en la Línea " + (s.left) +
-        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
     } 
 
     /**
      * Método al que se llama automáticamente ante algún error sintáctico 
      * en el que ya no es posible una recuperación de errores.
      **/ 
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+    /*public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.out.println("Error síntactico irrecuperable en la Línea " + 
         (s.left)+ " Columna "+s.right+". Componente " + s.value + 
-        " no reconocido."); 
-    }
+        " no reconocido.");
+    }*/
 
     public void guardarConjunto(String nombre, String cadena) {
         if (!nombresConjuntos.contains(nombre)) {
@@ -570,7 +568,6 @@ class CUP$Sintactico$actions {
     Arbol.tablaTransiciones(arbolito);
 
     arbolito.sueltos  = new Conjunto("sueltos", parser.sueltos);
-    System.out.println(parser.sueltos);
 
     Arbol.imprimirArbol(arbolito);
     Arbol.graficarAFD(arbolito);

@@ -21,9 +21,4 @@ public class Excepcion {
         this.linea = linea;
         this.columna = columna;
     }
-
-    @Override
-    public String toString() {
-        return "Excepcion{" + "tipo=" + tipo + ", descripcion=" + descripcion + ", linea=" + linea + ", columna=" + columna + '}';
-    }
 }

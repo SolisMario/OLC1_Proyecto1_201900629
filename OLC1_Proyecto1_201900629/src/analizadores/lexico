@@ -70,7 +70,7 @@ COMMMULTILINEA = <!<*([^<!]|[^!]"<"|"!"[^>])*!*!>
 
 {CARESP} {return new Symbol(sym.CARESP,yyline,yychar, yytext());} 
 {LETRA}|{DIGITO} {return new Symbol(sym.CARACTER, yyline, yychar, yytext());}
-({LETRA}|{DIGITO})+ {return new Symbol(sym.IDENTIFICADOR,yyline,yychar, yytext());}
+({LETRA}|{DIGITO}|"_")+ {return new Symbol(sym.IDENTIFICADOR,yyline,yychar, yytext());}
 ({LETRA}|{DIGITO}|{RESLEX})+ {return new Symbol(sym.LEXEMA,yyline,yychar, yytext());}
 {USORESERVADAS} {return new Symbol(sym.USORESERVADAS,yyline,yychar, yytext());}
 

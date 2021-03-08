@@ -345,6 +345,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
                     ArchivosSalida salida = new ArchivosSalida();
                     salida.escribirHTML(archivo.getName().replace(".olc", ""), errores);
                 }
+                txtSalida.append("Autómatas generados...\n");
             } catch (Exception ex) {
                 Logger.getLogger(InterfazGrafica.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -463,6 +464,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
                 Lexema lex = OLC1_Proyecto1_201900629.listaLexemas.get(i);
                 String regex = lex.regex;
                 int indiceArbol = OLC1_Proyecto1_201900629.listaNombresArboles.indexOf(regex);
+                if(indiceArbol >= 0){
                 Arbol arbolito = OLC1_Proyecto1_201900629.listaArboles.get(indiceArbol);
                 boolean validacion = Arbol.validarCadena(arbolito, lex.lexema, OLC1_Proyecto1_201900629.listaConjuntos);
                 if (validacion) {
@@ -473,6 +475,10 @@ public class InterfazGrafica extends javax.swing.JFrame {
                     strvalida = "Cadena no válida";
                 }
                 jsons.add(new JSONValues(lex.lexema, lex.regex, strvalida));
+                }
+                else{
+                    txtSalida.append("La expresión regular: " + lex.regex + " no existe.\n");
+                }
             }
             ArchivosSalida resultados = new ArchivosSalida();
             if (archivo != null) {
@@ -480,6 +486,7 @@ public class InterfazGrafica extends javax.swing.JFrame {
             } else {
                 resultados.escribirJSON(jsons, "defaultName");
             }
+            txtSalida.append("Archivo JSON generado...\n");
         }
     }//GEN-LAST:event_btnAnalizarCadenasActionPerformed
 

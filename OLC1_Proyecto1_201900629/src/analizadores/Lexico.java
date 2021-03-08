@@ -255,36 +255,39 @@ public class Lexico implements java_cup.runtime.Scanner {
 		/* 32 */ YY_NO_ANCHOR,
 		/* 33 */ YY_NOT_ACCEPT,
 		/* 34 */ YY_NO_ANCHOR,
-		/* 35 */ YY_NOT_ACCEPT,
-		/* 36 */ YY_NO_ANCHOR,
-		/* 37 */ YY_NOT_ACCEPT,
-		/* 38 */ YY_NO_ANCHOR,
-		/* 39 */ YY_NOT_ACCEPT,
+		/* 35 */ YY_NO_ANCHOR,
+		/* 36 */ YY_NOT_ACCEPT,
+		/* 37 */ YY_NO_ANCHOR,
+		/* 38 */ YY_NOT_ACCEPT,
+		/* 39 */ YY_NO_ANCHOR,
 		/* 40 */ YY_NOT_ACCEPT,
-		/* 41 */ YY_NOT_ACCEPT,
+		/* 41 */ YY_NO_ANCHOR,
 		/* 42 */ YY_NOT_ACCEPT,
-		/* 43 */ YY_NO_ANCHOR,
+		/* 43 */ YY_NOT_ACCEPT,
 		/* 44 */ YY_NOT_ACCEPT,
-		/* 45 */ YY_NO_ANCHOR
+		/* 45 */ YY_NO_ANCHOR,
+		/* 46 */ YY_NOT_ACCEPT,
+		/* 47 */ YY_NO_ANCHOR
 	};
 	private int yy_cmap[] = unpackFromString(1,65538,
 "6:9,7,5,6:2,8,6:18,30,4,14,31:2,21,31,16,31:2,27,28,24,22,25,1,32:10,18,17," +
-"3,31,2,29,31,32:2,9,32:6,12,32:3,11,10,32:11,31,13,31:4,32:13,15,32:12,19,2" +
-"6,20,23,6:65409,0:2")[0];
+"3,31,2,29,31,32:2,9,32:6,12,32:3,11,10,32:11,31,13,31:2,33,31,32:13,15,32:1" +
+"2,19,26,20,23,6:65409,0:2")[0];
 
-	private int yy_rmap[] = unpackFromString(1,46,
+	private int yy_rmap[] = unpackFromString(1,48,
 "0,1,2,1:3,3,4,5,1:4,6,1:2,6,1,6:3,7,8,6,1:4,8,9,10,11,9,12,1,13,14,15,16,17" +
-",18,19,20,21,20,8")[0];
+",18,11,19,20,21,22,21,8")[0];
 
-	private int yy_nxt[][] = unpackFromString(22,33,
-"1,2,3,30,34,4,5,6:2,7,45:3,36,8,45,34,9,10,11,12,38,13,14,15,16,17,18,19,20" +
-",6,34,45,-1:34,21,-1:38,6:2,-1:21,6,-1:11,22,43,22:2,33,-1,22,-1:6,23,-1:2," +
-"23,-1,23:3,-1:2,22,-1:14,35,-1:2,35:4,37,35:9,-1:11,23:4,33,-1,23,-1:6,23,-" +
-"1:2,23,-1,23:3,-1:2,23,-1,21:4,-1,21:2,-1,21:24,-1:9,22:4,33,-1,22,-1:6,23," +
-"-1:2,23,-1,23:3,-1:2,22,-1,29:3,39,29:28,-1:4,29,-1:37,22:3,28,33,-1,22,-1:" +
-"6,23,-1:2,23,-1,23:3,-1:2,22,-1:30,23,-1:16,26,-1:32,24:3,-1:13,23,-1:23,35" +
-",-1:32,25,-1:12,44,27,44,40,44:28,-1,29,32,41,39,29:28,-1:3,42,-1:30,29:2,4" +
-"1,39,29:28,-1:9,22:2,31,22,33,-1,22,-1:6,23,-1:2,23,-1,23:3,-1:2,22");
+	private int yy_nxt[][] = unpackFromString(23,34,
+"1,2,3,30,34,4,5,6:2,7,47:3,37,8,47,34,9,10,11,12,39,13,14,15,16,17,18,19,20" +
+",6,34,47,41,-1:35,21,-1:39,6:2,-1:21,6,-1:12,22,45,22:2,33,-1,22,-1:6,23,-1" +
+":2,23,-1,23:3,-1:2,22,31,-1:14,36,-1:2,36:4,38,36:9,-1:12,23:4,33,-1,23,-1:" +
+"6,23,-1:2,23,-1,23:3,-1:2,23,-1:2,21:4,-1,21:2,-1,21:25,-1:9,22:4,33,-1,22," +
+"-1:6,23,-1:2,23,-1,23:3,-1:2,22,31,-1,29:3,40,29:29,-1:4,29,-1:38,31:4,-1:2" +
+",31,-1:16,31:2,-1:30,23,-1:12,22:3,28,33,-1,22,-1:6,23,-1:2,23,-1,23:3,-1:2" +
+",22,31,-1:14,26,-1:33,24:3,-1:13,23,-1:24,36,-1:33,25,-1:13,46,27,46,42,46:" +
+"29,-1,29,32,43,40,29:29,-1:3,44,-1:31,29:2,43,40,29:29,-1:9,22:2,35,22,33,-" +
+"1,22,-1:6,23,-1:2,23,-1,23:3,-1:2,22,31");
 
 	public java_cup.runtime.Symbol next_token ()
 		throws java.io.IOException {
@@ -460,21 +463,29 @@ public class Lexico implements java_cup.runtime.Scanner {
 						{return new Symbol(sym.CARESP,yyline,yychar, yytext());}
 					case -33:
 						break;
-					case 36:
-						{return new Symbol(sym.CARESP,yyline,yychar, yytext());}
+					case 35:
+						{return new Symbol(sym.IDENTIFICADOR,yyline,yychar, yytext());}
 					case -34:
 						break;
-					case 38:
+					case 37:
 						{return new Symbol(sym.CARESP,yyline,yychar, yytext());}
 					case -35:
 						break;
-					case 43:
-						{return new Symbol(sym.IDENTIFICADOR,yyline,yychar, yytext());}
+					case 39:
+						{return new Symbol(sym.CARESP,yyline,yychar, yytext());}
 					case -36:
 						break;
-					case 45:
-						{return new Symbol(sym.CARACTER, yyline, yychar, yytext());}
+					case 41:
+						{return new Symbol(sym.CARESP,yyline,yychar, yytext());}
 					case -37:
+						break;
+					case 45:
+						{return new Symbol(sym.IDENTIFICADOR,yyline,yychar, yytext());}
+					case -38:
+						break;
+					case 47:
+						{return new Symbol(sym.CARACTER, yyline, yychar, yytext());}
+					case -39:
 						break;
 					default:
 						yy_error(YY_E_INTERNAL,false);
