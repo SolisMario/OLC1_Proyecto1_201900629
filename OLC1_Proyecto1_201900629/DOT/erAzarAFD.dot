@@ -1,8 +1,0 @@
-digraph afd {
-rankdir=LR;
-"S0"[shape=circle,label="S0"]
-"S0"[shape=doublecircle,label="S0"]
-"S0"->"S0"[label="simbols"]
-vacio[shape=none, style=invisible]
-vacio -> S0[label="Inicio"]
-}
